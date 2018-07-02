@@ -24,7 +24,7 @@ sudo pip install networkx
 mv changetoinstall/antidote.erl antidote/src/ 
 mv changetoinstall/triggers.erl antidote/src/
 mv changetoinstall/aqlparser.erl AQL/src/ 
-mv changetoinstall/aql_http_parser.erl AQL/src/
+mv changetoinstall/aql_http_handler.erl AQL/src/
 rm -rf changetoinstall
 rm -rf OPXAQL
 rm README.md 
