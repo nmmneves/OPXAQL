@@ -14,7 +14,7 @@ sudo apt-get install -y git
 ```
 git clone https://github.com/nmmneves/OPXAQL.git
 ```
-**3- Get rid of the basis directory**
+**3- Get the files from the basis directory**
 ```
 mv OPXAQL/* .
 ```
@@ -22,7 +22,7 @@ mv OPXAQL/* .
 ```
 chmod +x install.sh
 ```
-**5-Run the installation script(choose between Switch or Controlleras the only argument for the script)**
+**5-Run the installation script (choose between Switch or Controller as the only argument for the script)**
 ```
 ./install.sh Switch (or Controller)
 ```
