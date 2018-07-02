@@ -4,7 +4,7 @@ Routing implemented with the help of Databases.
 
 ### Instalation
 
-This represents the basic tutorial to install a Switch and a Controller(Will be updated with more detail in a short period of time)
+This represents the basic tutorial to install a Switch and a Controller (will be updated with more detail in a short period of time)
 
 **1- Make sure you have the lastest git version installed and up to date.**
 
