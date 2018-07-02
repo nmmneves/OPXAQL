@@ -37,7 +37,7 @@ The start script for the switch receives IPs as arguments (as much as you want).
 Setting Interface e101-001-0 Up with IP = 10.1.1.1
 Setting Interface e101-002-0 Up with IP = 11.1.1.1
 ```
-**For the controller, it receives the public ip of each switch that wants to be connected to him. In the simple where there's only two switches and the controller, the start script should look like this:**
+**For the controller, it receives the public ip of each switch that wants to be connected to him. In the simple example where there are only two switchs and the controller, the start script should look like this:**
 ```
 ./start 192.168.1.1 192.168.1.2
 
