@@ -17,14 +17,14 @@ git clone https://github.com/pedromslopes/AQL.git
 cd AQL
 git checkout new_features
 cd ..
-sudo rm -rf otp_src_19.3.tar.
+sudo rm -rf otp_src_19.3.tar.gz
 sudo rm -rf otp_src_19.3
 sudo apt-get install python-pip
 sudo pip install networkx
 mv changetoinstall/antidote.erl antidote/src/ 
 mv changetoinstall/triggers.erl antidote/src/
-mv changetoinstall/antidote.erl antidote/src/ 
-mv changetoinstall/antidote.erl antidote/src/
+mv changetoinstall/aqlparser.erl AQL/src/ 
+mv changetoinstall/aql_http_parser.erl AQL/src/
 rm -rf changetoinstall
 rm -rf OPXAQL
 rm README.md 
