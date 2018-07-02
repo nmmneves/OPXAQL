@@ -27,7 +27,8 @@ mv changetoinstall/aqlparser.erl AQL/src/
 mv changetoinstall/aql_http_handler.erl AQL/src/
 rm -rf changetoinstall
 rm -rf OPXAQL
-rm README.md 
+rm README.md
+chmod +x start.sh
 if [ $1 = "Switch" ]
 then
  sudo rm -rf ControllerDBCP
