@@ -29,6 +29,7 @@ rm -rf changetoinstall
 rm -rf OPXAQL
 rm README.md
 chmod +x start.sh
+chmod +x stop.sh
 if [ $1 = "Switch" ]
 then
  sudo rm -rf ControllerDBCP
