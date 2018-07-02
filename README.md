@@ -27,7 +27,7 @@ chmod +x install.sh
 ./install.sh Switch (or Controller)
 ```
 **6-Start the switch/controller. The first time you run it may take a while since it's compiling and creating a Antidote release.
-The start script for the switch receives IPs as arguments (as much as you want). Each IP will correspond to a single interface, starting with e101-001-0 and ending in e101-00X-0 where x is the number of IPs you've writen. For example: **
+The start script for the switch receives IPs as arguments (as much as you want). Each IP will correspond to a single interface, starting with e101-001-0 and ending in e101-00X-0 where x is the number of IPs you've writen. For example:**
 ```
 ./start 10.1.1.1 11.1.1.1
 
