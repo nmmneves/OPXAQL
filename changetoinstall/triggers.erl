@@ -84,13 +84,13 @@ prepare_update(interfaces, ObjUpdate, Transaction) ->
     %% We are reading the current record from 'interfaces' with
     %% primary key 'Key'
     {OldIp, OldEnabled, OldOperStatus} =
-        case table_utils:record_data(BoundObject, Transaction) of
+        case record_utils:record_data(BoundObject, Transaction) of
             [] ->
                 {undefined, undefined, undefined};
             [OldRecord] ->
-                {table_utils:lookup_value(ip, OldRecord),
-                    table_utils:lookup_value(enabled, OldRecord),
-                    table_utils:lookup_value(operstatus, OldRecord)}
+                {record_utils:lookup_value(ip, OldRecord),
+                    record_utils:lookup_value(enabled, OldRecord),
+                    record_utils:lookup_value(operstatus, OldRecord)}
         end,
 
     %% Now we read the new values introduced by this update
@@ -112,12 +112,12 @@ prepare_update(ipvfourrib, ObjUpdate, Transaction) ->
     BoundObject = {Key, Type, Bucket},
 
     {OldRoutePrefix, OldPrefixLen, ActualNumCols} =
-        case table_utils:record_data(BoundObject, Transaction) of
+        case record_utils:record_data(BoundObject, Transaction) of
             [] ->
                 {undefined, undefined, 0};
             [OldRecord] ->
-                {table_utils:lookup_value(routeprefix, OldRecord),
-                    table_utils:lookup_value(prefixlen, OldRecord),
+                {record_utils:lookup_value(routeprefix, OldRecord),
+                    record_utils:lookup_value(prefixlen, OldRecord),
                     length(OldRecord)}
         end,
 
@@ -160,7 +160,7 @@ interfaceslog_column_update(TableName, ColName, _OldVal, _NewVal, NewIdentifier,
     AllColNames = proplists:get_value(?COLUMNS, Columns),
     ValuesToInsert = [GenId, NewIdentifier, ColName],
 
-    StateOp = {{?STATE_COL, ?STATE_COL_DT}, table_utils:to_insert_op(?CRDT_VARCHAR, 'i')},
+    StateOp = {{?STATE_COL, ?STATE_COL_DT}, crdt_utils:to_insert_op(?CRDT_VARCHAR, 'i')},
 
     AllOps = [StateOp] ++ insert_data(AllColNames, ValuesToInsert, Columns, []),
 
@@ -174,7 +174,7 @@ ipvfourrib_column_update(TableName, NewIdentifier, NewRoutePrefix, NewPrefixLen,
 
     ValuesToInsert = [GenId, NewIdentifier, NewRoutePrefix, NewPrefixLen, NewOperation],
 
-    StateOp = {{?STATE_COL, ?STATE_COL_DT}, table_utils:to_insert_op(?CRDT_VARCHAR, 'i')},
+    StateOp = {{?STATE_COL, ?STATE_COL_DT}, crdt_utils:to_insert_op(?CRDT_VARCHAR, 'i')},
 
     AllOps = [StateOp] ++ insert_data(AllColNames, ValuesToInsert, Columns, []),
 
@@ -187,7 +187,7 @@ interfaceneighbourlog_column_update(TableName, NewInterfaceId, Transaction) ->
     AllColNames = proplists:get_value(?COLUMNS, Columns),
     ValuesToInsert = [GenId, NewInterfaceId],
 
-    StateOp = {{?STATE_COL, ?STATE_COL_DT}, table_utils:to_insert_op(?CRDT_VARCHAR, 'i')},
+    StateOp = {{?STATE_COL, ?STATE_COL_DT}, crdt_utils:to_insert_op(?CRDT_VARCHAR, 'i')},
 
     AllOps = [StateOp] ++ insert_data(AllColNames, ValuesToInsert, Columns, []),
 
@@ -278,7 +278,7 @@ generate_pk(TableName, Transaction) ->
     querying_utils:to_atom(Count).
 
 increment_counter(CounterKey) ->
-    IncrementOp = table_utils:to_insert_op(?CRDT_COUNTER_INT, 1),
+    IncrementOp = crdt_utils:to_insert_op(?CRDT_COUNTER_INT, 1),
     CountUpd = {{'Count',antidote_crdt_counter_pn}, IncrementOp},
 
     Update = querying_utils:create_crdt_update(CounterKey, update, CountUpd),
@@ -291,7 +291,7 @@ read_counter(CounterKey, _Transaction) ->
         [] ->
             0;
         _Else ->
-            table_utils:lookup_value('Count', CounterRecord)
+            record_utils:lookup_value('Count', CounterRecord)
     end.
 
 %% ====================================================================
@@ -308,8 +308,8 @@ register_trigger(Table, TriggerName) ->
 
 insert_data([ColName | Columns], [Val | Values], ColumnSpecs, Acc) ->
     {ColName, ColAQLType, _ColConstraint} = proplists:get_value(ColName, ColumnSpecs),
-    ColCRDT = table_utils:type_to_crdt(ColAQLType, ignore),
-    ColOp = {{ColName, ColCRDT}, table_utils:to_insert_op(ColCRDT, Val)},
+    ColCRDT = crdt_utils:type_to_crdt(ColAQLType, ignore),
+    ColOp = {{ColName, ColCRDT}, crdt_utils:to_insert_op(ColCRDT, Val)},
     NewAcc = lists:append(Acc, [ColOp]),
     insert_data(Columns, Values, ColumnSpecs, NewAcc);
 insert_data([], [], _ColumnSpecs, Acc) ->
