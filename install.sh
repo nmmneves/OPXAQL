@@ -35,6 +35,7 @@ then
  sudo rm -rf StartControllerScript
  mv StartSwitchScript/start.sh .
  rm -rf StartSwitchScript
+ rm join_dcs_script.erl
 elif [ $1 = "Controller" ]
 then
  sudo rm -rf SwtichDBCP
@@ -42,7 +43,6 @@ then
  sudo rm -rf StartSwitchScript
  mv StartControllerScript/start.sh .
  rm -rf StartControllerScript
- rm join_dcs_script.erl
 else
  echo "Choose between Switch or Controller"
 fi
