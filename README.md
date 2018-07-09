@@ -30,7 +30,6 @@ chmod +x install.sh
 The start script for the switch receives IPs as arguments (as much as you want). Each IP will correspond to a single interface, starting with e101-001-0 and ending in e101-00X-0 where x is the number of IPs you've writen. For example:**
 ```
 ./start 10.1.1.1 11.1.1.1
-
 ```
 **It will print something like this in response (if nothing fails):**
 ```
@@ -40,9 +39,7 @@ Setting Interface e101-002-0 Up with IP = 11.1.1.1
 **For the controller, it receives the public ip of each switch that wants to be connected to him. In the simple example where there are only two switchs and the controller, the start script should look like this:**
 ```
 ./start 192.168.1.1 192.168.1.2
-
 ```
-
 **7-Copy/paste**
 ```
 sudo apt-get -y update &&
