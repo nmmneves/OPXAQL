@@ -4,7 +4,7 @@ Routing implemented with the help of Databases.
 
 ### Instalation
 
-This represents the basic tutorial to install a Switch and a Controller (will be updated with more detail in a short period of time)
+This represents the basic tutorial to install a Switch and a Controller (will be updated with more detail in a short period of time). In the end of this explination there is a copy/paste segment with all the commands so you dont have to run one by one, excluding the start.
 
 **1- Make sure you have the lastest git version installed and up to date.**
 ```
@@ -43,7 +43,7 @@ Setting Interface e101-002-0 Up with IP = 11.1.1.1
 
 ```
 
-### Copy to console and execute
+**7-Copy/paste**
 ```
 sudo apt-get -y update &&
 sudo apt-get -y upgrade &&
