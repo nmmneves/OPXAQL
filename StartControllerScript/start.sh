@@ -38,11 +38,11 @@ do
 echo $ip
 NODES+=" antidote@"$ip
 done
+cd ..
 ./join_dcs_script.erl $NODES 
 #Create the tables necessary for the controller to function.
 #Then ends by starting the controller processes
 echo "Starting Table Creation"
-cd ..
 sudo python createtablescontroller.py
 echo "Starting Controller Initialization"
 sudo python -m ControllerDBCP.EventHandler
