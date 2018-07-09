@@ -44,16 +44,12 @@ Setting Interface e101-002-0 Up with IP = 11.1.1.1
 ```
 
 ### Copy to console and execute
-
+```
 sudo apt-get -y update &&
-
 sudo apt-get -y upgrade &&
 sudo apt-get -y install git &&
-
 git clone https://github.com/nmmneves/OPXAQL.git &&
-
 mv OPXAQL/* . &&
-
 chmod +x install.sh &&
-
 ./install.sh Controller
+```
