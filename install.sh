@@ -38,7 +38,7 @@ then
  rm join_dcs_script.erl
 elif [ $1 = "Controller" ]
 then
- sudo rm -rf SwtichDBCP
+ sudo rm -rf SwitchDBCP
  rm createtablesswitch.py
  sudo rm -rf StartSwitchScript
  mv StartControllerScript/start.sh .
