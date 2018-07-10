@@ -1,4 +1,4 @@
-#This exported variables are used to configure the IP of both Antidote and AQL nodes
+#This variables are used to configure the IP of both Antidote and AQL nodes
 #so that the controller is able to connect himself and the switches via script
 export PB_IP=$(/sbin/ifconfig | grep -A 1 'eth0' | tail -1 | cut -d ':' -f 2 | cut -d ' ' -f 1) 
 export IP=$PB_IP
