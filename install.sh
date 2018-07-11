@@ -8,7 +8,8 @@ then
  echo "Invalid name. Choose between Switch or Controller"
  exit
 fi
-sudo apt-get -y install build-essential && sudo apt-get -y update && sudo apt-get -y upgrade
+sudo apt-get -y install build-essential && sudo apt-get -y update
+#&& sudo apt-get -y upgrade
 wget erlang.org/download/otp_src_19.3.tar.gz
 tar zfx otp_src_19.3.tar.gz
 cd otp_src_19.3
@@ -17,7 +18,7 @@ sudo apt-get -y install libncurses-dev && sudo apt-get -y install default-jdk &&
 sudo make
 sudo make install
 cd ..
-sudo apt-get -y update && sudo apt-get -y upgrade && sudo apt-get install screen && sudo apt-get install curl
+sudo apt-get -y update && sudo apt-get install screen && sudo apt-get install curl
 git clone https://github.com/pedromslopes/antidote.git
 cd antidote
 if [ $1 = "Switch" ]; then
