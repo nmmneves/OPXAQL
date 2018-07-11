@@ -45,6 +45,7 @@ then
  sudo rm -rf StartSwitchScript
  mv StartControllerScript/start.sh .
  rm -rf StartControllerScript
+ rm interfacestatechange.py
  chmod +x join_dcs_script.erl
 else
  echo "Choose between Switch or Controller"
