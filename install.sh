@@ -21,7 +21,7 @@ sudo apt-get -y update && sudo apt-get -y upgrade && sudo apt-get install screen
 git clone https://github.com/pedromslopes/antidote.git
 cd antidote
 if [ $1 = "Switch" ]; then
- git checkout aql_oriented_features
+ git checkout 8b9d6735810110228347053ad01fc1505fa334f4
 else
  git checkout 25aaa7a5c306ad5ba534c5a6281794922fe6c6a4
 fi
