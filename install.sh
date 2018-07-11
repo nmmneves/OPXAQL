@@ -1,8 +1,10 @@
-if [ $# -ne 1]; then
+if [ $# -ne 1 ]
+then
  echo "Invalid number of arguments. The number of arguments must be exactly 1"
  exit
 fi
-if [ $1 != "Switch" ] && [ $1  != "Controller" ]; then
+if [ $1 != "Switch" ] && [ $1  != "Controller" ]
+then
  echo "Invalid name. Choose between Switch or Controller"
  exit
 fi
