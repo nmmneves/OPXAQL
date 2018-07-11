@@ -24,7 +24,7 @@ chmod +x install.sh
 ```
 **5-Run the installation script (choose between "Switch" or "Controller" as the only argument for the script)**
 ```
-./install.sh Switch (or Controller)
+./install.sh Switch
 ```
 **6-Start the switch/controller. The first time you run it may take a while since it's compiling and creating a Antidote release.
 The start script for the switch receives IPs as arguments (as much as you want). Each IP will correspond to a single interface, starting with e101-001-0 and ending in e101-00X-0 where x is the number of IPs you've writen. For example:**
