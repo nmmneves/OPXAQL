@@ -6,13 +6,9 @@ from .Utils import Utils
 import uuid
 import time
 
-#
 #To see what the algorithm is doing uncomment all prints and related code.
-#
 #This code was written in a readable way.
 #It can clearly be improved by removing redundant cycles and improve algorithm time complexity
-#
-
 
 class Routing:
 
@@ -212,7 +208,7 @@ class Routing:
                     paths_dict[origin_id].extend([path])
                     #print(path)
                 except:
-                    print("Path from " + origin_id + " to " + destination_id + " failed or does not exist")
+                    Routing.log("Path from " + origin_id + " to " + destination_id + " failed or does not exist")
 
 
         #for i in paths_dict:
@@ -362,10 +358,9 @@ class Routing:
             if (route_exists==False):
                 # Exists on the database but not on the new route list -----> delete from the database
 
-
-                query = db_operations.DELELET_ROUTE_BY_IDENTIFIER
+                query = db_operations.DELELE_ROUTE_BY_IDENTIFIER
                 queryargs = query.format(identifier)
-                operations.extend([querygargs])
+                operations.append(queryargs)
                 Routing.log("Route removed from the database: " + route_prefix + "-> "+next_hop)
 
         # Go on with the rest operations
@@ -374,7 +369,7 @@ class Routing:
             Routing.log("Route to be insert on the database: " + route.network + "-> " + route.next_hop)
             query =  db_operations.INSERT_NEW_ROUTE
             queryargs = query.format(str(uuid.uuid4()), route.network, route.prefix_length,route.next_hop,route.metric, route.router_id)
-            operations.extend([queryargs])
+            operations.append(queryargs)
 
         Routing.log("Convergence finished. Updating database...")
         #Utils.timeLogger()

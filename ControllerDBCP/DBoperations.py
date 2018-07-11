@@ -43,7 +43,7 @@ class DBoperations:
     GET_NEIGHBOUR_SWITCH_RELATIONS_BY_INTERFACE = "SELECT physaddress,remoteinterfacename FROM interfaceneighbour WHERE interfaceid = \'{}\' "
 
     #GET_INTERFACE_BY_NAME_SWITCH = "SELECT `identifier` FROM `interfaces` WHERE  `name` = %s and `switch_identifier_fk` = %s"
-    GET_INTERFACE_BY_NAME_SWITCH = "SELECT identifier FROM interfaces WHERE  name = \'{}\' AND switchidentifierfk = \'{}\' "
+    GET_INTERFACE_BY_NAME_AND_ID = "SELECT identifier FROM interfaces WHERE  name = \'{}\' AND switchidentifierfk = \'{}\' "
 	
 	#GET_INTERFACE_OPER_STATUS_BY_NAME_ID = "SELECT `oper-status` FROM `interfaces` WHERE  `identifier` = %s"
     GET_INTERFACE_OPER_STATUS_BY_NAME_ID = "SELECT operstatus FROM interfaces WHERE identifier = \'{}\'"
@@ -57,7 +57,7 @@ class DBoperations:
 	#INSERT_NEW_ROUTE = """insert into `ipvfourrib`(identifier,`route-prefix`,`prefix-len`,`next-hop`,weight, `switch_identifier_fk`)  values(%s,%s,%s,%s,%s,%s)"""
     INSERT_NEW_ROUTE = "INSERT INTO ipvfourrib (identifier,routeprefix,prefixlen,nexthop,weight,switchidentifierfk) VALUES (\'{}\',\'{}\',{},\'{}\',{},\'{}\')"
 		
-    #DELELET_ROUTE_BY_IDENTIFIER = """delete FROM `ipvfourrib` where identifier = %s"""
+    #DELETE_ROUTE_BY_IDENTIFIER = """delete FROM `ipvfourrib` where identifier = %s"""
     DELELE_ROUTE_BY_IDENTIFIER = "DELETE FROM ipvfourrib WHERE identifier = \'{}\'"
 
 	#DELETE_INTERFACE_NEIGHBOUR_BY_INTERFACEID = "delete from `interface_neighbour` where `interface_id` = %s"

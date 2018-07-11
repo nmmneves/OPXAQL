@@ -1,7 +1,6 @@
 import time
 from threading import Thread
 from Queue import Queue
-#import mysql.connector
 from ControllerDBCP.DBoperations import DBoperations
 from ControllerDBCP.DataHandler import Handler
 from .Utils import Utils
@@ -95,7 +94,7 @@ class DBMonitor:
 
     def change_operation_status_interface(self, interface_id):
         q.put((dh.interface_oper_status_change, (interface_id,), {}))
-        self.log("Interface operation state changed! "+interface_id )
+        self.log("Interface operation state changed: "+interface_id )
         #Utils.timeLogger()
 
     def change_interface_neighbour(self,):
