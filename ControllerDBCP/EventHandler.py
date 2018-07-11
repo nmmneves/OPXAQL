@@ -14,7 +14,7 @@ import subprocess
 # Work thread.
 class DBMonitor:
 
-    INTERFACES_OPERATION_STATUS = "oper-status"
+    INTERFACES_OPERATION_STATUS = "operstatus"
     SLEEP_DURATION = 0.1 #seconds.
 
     def __init__(self, queue):
@@ -29,16 +29,13 @@ class DBMonitor:
 
             self.check_interfaces()
             self.check_interfaces_neighbour()
-
             time.sleep(self.SLEEP_DURATION)
-
 
 
     def check_interfaces(self):
         # Query database and retrieve all new entries.
         query = self.db_operations.GET_INTERFACES_CHANGES
         rows = self.db_operations.db_select_operation(query, '')
-
 
         for row in rows:
             log_id = row["id"]
@@ -99,12 +96,12 @@ class DBMonitor:
     def change_operation_status_interface(self, interface_id):
         q.put((dh.interface_oper_status_change, (interface_id,), {}))
         self.log("Interface operation state changed! "+interface_id )
-        Utils.timeLogger()
+        #Utils.timeLogger()
 
     def change_interface_neighbour(self,):
         q.put((dh.interface_neighbour_change, (), {}))
         self.log("Neighbour relationship changed!")
-        Utils.timeLogger()
+        #Utils.timeLogger()
 
     def log(self, data):
         Utils.cliLogger("[DBmonitor] " + data, 0)
