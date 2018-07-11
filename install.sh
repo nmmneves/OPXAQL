@@ -18,7 +18,7 @@ sudo apt-get -y install libncurses-dev && sudo apt-get -y install default-jdk &&
 sudo make
 sudo make install
 cd ..
-sudo apt-get -y update && sudo apt-get install screen && sudo apt-get install curl
+sudo apt-get -y update && sudo apt-get install -y screen && sudo apt-get install -y curl
 git clone https://github.com/pedromslopes/antidote.git
 cd antidote
 if [ $1 = "Switch" ]; then
