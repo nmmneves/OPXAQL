@@ -38,7 +38,7 @@ fi
 cd ..
 sudo rm -rf otp_src_19.3.tar.gz
 sudo rm -rf otp_src_19.3
-sudo apt-get install python-pip
+sudo apt-get -y install python-pip
 sudo pip install networkx
 mv changetoinstall/antidote.erl antidote/src/ 
 mv changetoinstall/triggers.erl antidote/src/
