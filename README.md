@@ -21,7 +21,7 @@ end
 
 5- Now in Virtual Box there should be running the VM you just downloaded
 
-6- Shutdown the VM**
+6- Shutdown the VM
 
 7- Follow one of this tutorials to change from VirtualBox to VMWare
 
