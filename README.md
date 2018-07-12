@@ -20,7 +20,7 @@ end
 
 4- In the same directory do "vagrant up". It should download a VMI with OPX Version 2.2 pre-installed.
 
-5- Now in Virtual Box there should be running the VM you just downloaded.
+5- Now in Virtual Box, the VM you just downloaded should be running.
 
 6- Shutdown the VM.
 
