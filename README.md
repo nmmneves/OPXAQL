@@ -19,15 +19,15 @@ end
 
 4- In the same directory do "vagrant up"
 
-4- Now in Virtual Box there should be running the VM you just downloaded
+5- Now in Virtual Box there should be running the VM you just downloaded
 
-5- Shutdown the VM**
+6- Shutdown the VM**
 
-6- Follow one of this tutorials to change from VirtualBox to VMWare
+7- Follow one of this tutorials to change from VirtualBox to VMWare
 -https://kb.vmware.com/s/article/2010196
 -https://askubuntu.com/questions/588426/how-to-export-and-import-virtualbox-vm-images
 
-7- Put file 80-dn-virt-intf.rules in the directory etc/udev/rules.d
+8- Put file 80-dn-virt-intf.rules in the directory etc/udev/rules.d
 
 ### Instalation
 
