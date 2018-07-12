@@ -4,12 +4,12 @@ Routing implemented with the help of Databases.
 
 ### ----------Getting Virtual Machine Image----------
 
-1- Download Vagrant, Virtual Box and VMWare
+1- Download Vagrant(2.1.2), Virtual Box(5.2.8) and VMWare WorkstationPro(14.1.2).
 
 Note: In Windows you might need to go "Manage Optional Features" in "Settings" and install OpenSSH Client and Server
-and also go to "Use Developer Features" e select Developer Mode
+and also go to "Use Developer Features" e select Developer Mode.
 
-2- Open Virtualbox
+2- Open Virtualbox.
 
 3- Create a "Vagrantfile", preferably in the Desktop directory, with this:
 
@@ -18,19 +18,19 @@ Vagrant.configure("2") do |config|
   config.vm.box_version = "2.2.0"
 end
 
-4- In the same directory do "vagrant up"
+4- In the same directory do "vagrant up". It should download a VMI with OPX Version 2.2 pre-installed.
 
-5- Now in Virtual Box there should be running the VM you just downloaded
+5- Now in Virtual Box there should be running the VM you just downloaded.
 
-6- Shutdown the VM
+6- Shutdown the VM.
 
-7- Follow one of this tutorials to change from VirtualBox to VMWare
+7- Follow one of this tutorials to change from VirtualBox to VMWare.
 
 -https://kb.vmware.com/s/article/2010196
 
 -https://askubuntu.com/questions/588426/how-to-export-and-import-virtualbox-vm-images
 
-8- Put file 80-dn-virt-intf.rules in the directory etc/udev/rules.d
+8- Put file 80-dn-virt-intf.rules in the directory etc/udev/rules.d.
 
 ### --------------------Instalation--------------------
 
