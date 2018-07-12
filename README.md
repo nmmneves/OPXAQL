@@ -32,7 +32,7 @@ end
 
 8- Put file 80-dn-virt-intf.rules in the directory etc/udev/rules.d
 
-### ----------Instalation----------
+### ------------------Instalation------------------
 
 This represents the basic tutorial to install a Switch and a Controller (will be updated with more detail in a short period of time). In the end of this explination there is a copy/paste segment with all the commands so you dont have to run one by one, excluding the start.
 
