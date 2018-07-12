@@ -4,30 +4,30 @@ Routing implemented with the help of Databases.
 
 ### Getting Virtual Machine Image
 
-**1- Download Vagrant, Virtual Box and VMWare**
-**Note: In Windows you might need to go "Manage Optional Features" in "Settings" and install OpenSSH Client and Server
-and also go to "Use Developer Features" e select Developer Mode**
+1- Download Vagrant, Virtual Box and VMWare
+Note: In Windows you might need to go "Manage Optional Features" in "Settings" and install OpenSSH Client and Server
+and also go to "Use Developer Features" e select Developer Mode
 
-**2- Open Virtualbox**
+2- Open Virtualbox
 
-**3- Create a "Vagrantfile", preferably in the Desktop directory, with this:**
+3- Create a "Vagrantfile", preferably in the Desktop directory, with this:
 
 Vagrant.configure("2") do |config|
   config.vm.box = "opx/2.2.0"
   config.vm.box_version = "2.2.0"
 end
 
-**4- In the same directory do "vagrant up"**
+4- In the same directory do "vagrant up"
 
-**4- Now in Virtual Box there should be running the VM you just downloaded**
+4- Now in Virtual Box there should be running the VM you just downloaded
 
-**5- Shutdown the VM**
+5- Shutdown the VM**
 
-**6- Follow one of this tutorials to change from VirtualBox to VMWare**
+6- Follow one of this tutorials to change from VirtualBox to VMWare
 -https://kb.vmware.com/s/article/2010196
 -https://askubuntu.com/questions/588426/how-to-export-and-import-virtualbox-vm-images
 
-**7- Put file 80-dn-virt-intf.rules in the directory etc/udev/rules.d**
+7- Put file 80-dn-virt-intf.rules in the directory etc/udev/rules.d
 
 ### Instalation
 
