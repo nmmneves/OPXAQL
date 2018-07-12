@@ -5,6 +5,7 @@ Routing implemented with the help of Databases.
 ### Getting Virtual Machine Image
 
 1- Download Vagrant, Virtual Box and VMWare
+
 Note: In Windows you might need to go "Manage Optional Features" in "Settings" and install OpenSSH Client and Server
 and also go to "Use Developer Features" e select Developer Mode
 
