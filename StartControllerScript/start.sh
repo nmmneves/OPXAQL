@@ -31,7 +31,7 @@ screen -S AQL -d -m bash -c 'make shell;exec sh'
 #that we want to connect. Thats another reason why the machine's
 #IP is necessary
 sleep 4
-echo "Connecting Controller to Switch with IP"
+echo "Connecting Controller to Switch with IP:"
 echo $PB_IP
 for ip in "$@"
 do
@@ -39,7 +39,7 @@ echo $ip
 NODES+=" antidote@"$ip
 done
 cd ..
-./join_dcs_script.erl $NODES 
+./join_dcs_script.erl $NODES > /dev/null
 #Create the tables necessary for the controller to function.
 #Then ends by starting the controller processes
 echo "Starting Table Creation"
