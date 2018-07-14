@@ -15,7 +15,7 @@ class Handler:
         :param if_name: An interface name.
         :return: The UUID of the switch or None if the interfaces does not exist in the model.
         """
-        query = self.db_operations.GET_IFENTIFIER_FROM_NAME
+        query = self.db_operations.GET_IDENTIFIER_FROM_NAME
         results = self.db_operations.db_select_operation(query, if_name)
         # If there is no result, this interface name does belong to the data model.
         # Might happen with the management network interface name
@@ -25,12 +25,13 @@ class Handler:
             if_identifier = ''.join(chr(i) for i in results[0]['identifier'])
             return if_identifier
 
+
     def get_switch_UUID(self):
         """
         Queries and returns the UUID of the switch.
         :return: The UUID of the switch
         """
-        query = self.db_operations.GET_IFENTIFIER_FROM_SWITCH
+        query = self.db_operations.GET_IDENTIFIER_FROM_SWITCH
         results = self.db_operations.db_select_operation(query, ())
         switch_uuid = ''.join(chr(i) for i in results[0]['identifier'])
         return switch_uuid
@@ -82,9 +83,8 @@ class Handler:
 
         # Delete just the relationship to the neighbour
         operations = []
-        if_identifier = self.get_if_id_from_name(if_name)
-
         query = self.db_operations.DELETE_INTERFACE_NEIGHBOUR_BY_INTERFACEID
+        if_identifier = self.get_if_id_from_name(if_name)
         queryargs = query.format(if_identifier)
         operations.append(query)
         self.db_operations.db_insert_operations(operations)
@@ -137,17 +137,14 @@ class Handler:
         :return:
         """
         operations = []
-        if_identifier = self.get_if_id_from_name(interface.name)
         # Updating "oper-status" field only, for now.
         query = self.db_operations.UPDATE_INTERFACE_OPERSTATUS
+        if_identifier = self.get_if_id_from_name(interface.name)
         queryargs = query.format(interface.oper_status, if_identifier)
         operations.append(queryargs)
         #print("Operstatus data handler: ",queryargs)
         self.db_operations.db_insert_operations(operations)
-
         self.log("Interfaces changes added to the database. Operstatus changed to: " + str(interface.oper_status) + " of: " + if_identifier)
-
-
 
     def get_all_switch_data(self):
         """
@@ -162,7 +159,14 @@ class Handler:
         querylist.append(queryargs)
         self.db_operations.db_insert_operations(querylist)
         self.log("Switch data added to the database.")
-
+    
+    #(Extra code)This if is added to solve the problem of full replication
+    def get_switch_by_physaddres(self):
+        phys_address = cps_operations.getChassisMac()
+        query = self.db_operations.GET_IDENTIFIER_FROM_SWITCH_BY_PHYSADDRESS
+        result = self.db_operations.db_select_operation(query,phys_address)
+        identifier = ''.join(chr(i) for i in result[0]['identifier'])
+        return identifier
 
     def get_all_interface_data(self):
         """
@@ -208,17 +212,3 @@ class Handler:
 
     def log(self,data):
         Utils.cliLogger("[DataHandler] "+ data,0)
-
-	""" def set_interface_ip(self,if_name,ip_addr,pfix_len):
-
-    cps_operations.setInterfaceIpAddress(if_name, ip_addr, pfix_len)
-
-    def set_interface_admin_state(self,if_name,enabled):
-      
-    cps_operations.setInterfaceAdminLinkState(if_name, enabled)"""
-
-
-
-
-
-

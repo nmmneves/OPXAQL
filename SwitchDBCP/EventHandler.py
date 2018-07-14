@@ -1,4 +1,5 @@
 import time
+
 from threading import Thread
 from Queue import Queue
 from SwitchDBCP.DBoperations import DBoperations
@@ -14,8 +15,6 @@ import subprocess
 #LLDP configurations
 LLDP_TXHOLD = "3"
 LLDP_TXINTERVAL = "1"
-
-
 
 # Work thread.
 class DBMonitor:
@@ -61,8 +60,9 @@ class DBMonitor:
             if operation == self.IPV4_INSERT:
                 self.insert_route(identifier)
 
+            #(Extra Code)Added identifier to solve full replication problems
             elif operation == self.IPV4_DELETE:
-                self.delete_route(log_route_prefix, log_prefix_len)
+                self.delete_route(identifier,log_route_prefix, log_prefix_len)
 
             elif operation == self.IPV4_UPDATE:
                 # It is assumed that an update does not change the route_prefix and prefix_len
@@ -81,49 +81,74 @@ class DBMonitor:
         query = self.db_operations.GET_ROUTE_DATA
         args = (identifier)
         nrows = self.db_operations.db_select_operation(query, args)
+        print("Trying to insert")
+        # The route might not exist anymore
+        if not nrows:
+            return
+        else:            
+            #(Extra code)This if is added to solve the problem of full replication
+            ownid = dh.get_switch_by_physaddres()
+            #print("Ownid: ",ownid)
+            switchidentifierfk = ''.join(chr(i) for i in nrows[0]["switchidentifierfk"])
+            #print("Switchident: ",switchidentifierfk)
+            #print(switchidentifierfk == ownid)
+            if (switchidentifierfk == ownid):
+                route_prefix = ''.join(chr(i) for i in nrows[0]["routeprefix"])
+                prefix_len = nrows[0]["prefixlen"]
+                weight = nrows[0]["weight"]
+                if_name = ''#Avoiding using the outbound interface
+                next_hop = ''.join(chr(i) for i in nrows[0]["nexthop"])
+                q.put((dh.add_route, (route_prefix, prefix_len, if_name, weight,next_hop), {}))
+                self.log("New route: route prefix: " + str(route_prefix) + " prefix length: " + str(prefix_len) + " weight: " + str(weight) + " next-hop: " + str(next_hop))
+
+
+    def delete_route(self,identifier,log_route_prefix,log_prefix_len):
+        #(Extra code)This if is added to solve the problem of full replication
+        print("Trying to delete")
+        query = self.db_operations.GET_ROUTE_DATA
+        args = (identifier)
+        nrows = self.db_operations.db_select_operation(query, args)
+        print(nrows)
         # The route might not exist anymore
         if not nrows:
             return
         else:
-
-            route_prefix = ''.join(chr(i) for i in nrows[0]["routeprefix"])
-            prefix_len = nrows[0]["prefixlen"]
-            weight = nrows[0]["weight"]
-            if_name = ''#Avoiding using the outbound interface
-            next_hop = ''.join(chr(i) for i in nrows[0]["nexthop"])
-
-            q.put((dh.add_route, (route_prefix, prefix_len, if_name, weight,next_hop), {}))
-
-            self.log("New route: route prefix: " + str(route_prefix) + " prefix length: " + str(prefix_len) + " weight: " + str(weight) + " next-hop: " + str(next_hop))
-
-
-    def delete_route(self,log_route_prefix,log_prefix_len):
-        q.put((dh.del_route, (log_route_prefix, log_prefix_len), {}))
-        self.log("Delete route: route prefix: " + log_route_prefix + " prefix length: " + str(log_prefix_len))
+            ownid = dh.get_switch_by_physaddres()
+            print("Ownid: ",ownid)
+            switchidentifierfk = ''.join(chr(i) for i in nrows[0]["switchidentifierfk"])
+            print("Switchident: ",switchidentifierfk)
+            print(switchidentifierfk == ownid)
+            if (switchidentifierfk == ownid):
+                q.put((dh.del_route, (log_route_prefix, log_prefix_len), {}))
+                self.log("Delete route: route prefix: " + log_route_prefix + " prefix length: " + str(log_prefix_len))
 
 
     def update_route(self,identifier, log_route_prefix, log_prefix_len):
         query = self.db_operations.GET_ROUTE_DATA
         args = (identifier)
         nrows = self.db_operations.db_select_operation(query, args)
+        print("Trying to update")
         # The route might not exist anymore
         if not nrows:
             return
         else:
-            route_prefix = ''.join(chr(i) for i in nrows[0]["routeprefix"])
-            prefix_len = nrows[0]["prefixlen"]
-            weight = nrows[0]["weight"]
-            if_name = ''#Avoiding using the outbound interface
-            next_hop = ''.join(chr(i) for i in nrows[0]["nexthop"])
-
-            q.put((dh.update_route, (route_prefix, prefix_len, if_name, weight,next_hop), {}))
-
+            #(Extra code)This if is added to solve the problem of full replication
+            ownid = dh.get_switch_by_physaddres()
+            #print("Ownid: ",ownid)
+            switchidentifierfk = ''.join(chr(i) for i in nrows[0]["switchidentifierfk"])
+            #print("Switchident: ",switchidentifierfk)
+            #print(switchidentifierfk == ownid)
+            if (switchidentifierfk == ownid):
+                route_prefix = ''.join(chr(i) for i in nrows[0]["routeprefix"])
+                prefix_len = nrows[0]["prefixlen"]
+                weight = nrows[0]["weight"]
+                if_name = ''#Avoiding using the outbound interface
+                next_hop = ''.join(chr(i) for i in nrows[0]["nexthop"])
+                q.put((dh.update_route, (route_prefix, prefix_len, if_name, weight,next_hop), {}))
         # Alternative
         #self.delete_route(log_route_prefix,log_prefix_len)
         #self.insert_route(identifier)
-
-            self.log("Updated route: route prefix: " + log_route_prefix + " prefix length: " + str(
-                log_prefix_len))
+                self.log("Updated route: route prefix: " + log_route_prefix + " prefix length: " + str(log_prefix_len))
 
     def log(self, data):
         Utils.cliLogger("[DBmonitor] " + data, 0)
@@ -261,7 +286,6 @@ class CPSEvent:
 # Queue used to order events from the listeners.
 q = Queue()
 dh = Handler()
-
 
 # Start neighbour discovery work thread
 lldp_exctractor = LLDPEvent(q)
