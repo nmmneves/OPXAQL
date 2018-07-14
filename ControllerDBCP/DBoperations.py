@@ -74,8 +74,11 @@ class DBoperations:
 
     #DELETE_INTERFACE_NEIGHBOUR_LOG = """delete FROM `interface_neighbour-changes-log`"""
     DELETE_INTERFACE_NEIGHBOUR_LOG = "DELETE FROM interfaceneighbourchangeslog"
-	
-"""import mysql.connector
+
+"""    Extra code to deal with full replication
+    DELETE_ALL_ROUTES = "DELETE FROM ipvfourrib"
+
+import mysql.connector
 
 DATABASE_ACCESS_DATA_FILE = "Controller/database_config.txt"
 class DBoperations:

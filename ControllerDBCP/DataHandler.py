@@ -20,40 +20,47 @@ class Handler:
         query = self.db_operations.GET_INTERFACE_OPER_STATUS_BY_NAME_ID
         args = (interface_id)
         results = self.db_operations.db_select_operation(query, args)
+				
         for interface in results:  # Has just one
             oper_status = interface["operstatus"]
 
         if (oper_status == IF_OPER_STATUS_UP):
             return #We must ignore IF coming up
-
+					
         self.log("Will delete all neighbour relations with interface: " + interface_id )
 
         #Get this interface relations
         query = self.db_operations.GET_NEIGHBOUR_SWITCH_RELATIONS_BY_INTERFACE
         args = (interface_id)
         results = self.db_operations.db_select_operation(query, args)
-
+		
         for result in results:#Has just one
             remote_phys_address = ''.join(chr(i) for i in result["physaddress"])
             remote_if_name = ''.join(chr(i) for i in result["remoteinterfacename"])
-        #print(str(remote_phys_address))
-        #print(str(remote_if_name))
+			
+        #print("Remotephysaddress: ",str(remote_phys_address))
+        #print("Remoteifname: ",str(remote_if_name))
+		
         # Get all switchs and find matching phys_address;
         query = self.db_operations.GET_ALL_SWITCHES_BY_PHYS_ADDRESS
         args = (remote_phys_address.replace(":", ""))
         switches = self.db_operations.db_select_operation(query, str(args))
-
+		
         for result in switches: #Has just one
             remote_switch_identifier = ''.join(chr(i) for i in result["identifier"])
 
+        #print("Identifier: ",remote_switch_identifier)
+		
         query = self.db_operations.GET_INTERFACE_BY_NAME_AND_ID
         queryargs = query.format(remote_if_name,remote_switch_identifier)
         interfaces = self.db_operations.db_select_operation(query, '')
-        print("Print interfaces:",interfaces)
+		
+        #print("Print interfaces:",interfaces)
+		
         #for result in interfaces:  # Has just one
         #    remote_interfaces_id = ''.join(chr(i) for i in result["identifier"])
-        #print(remote_interfaces_id)
         remote_interfaces_id = interfaces
+        #print("Remote interface: ",remote_interfaces_id)
         operations = []
         
         query = self.db_operations.DELETE_INTERFACE_NEIGHBOUR_BY_INTERFACEID

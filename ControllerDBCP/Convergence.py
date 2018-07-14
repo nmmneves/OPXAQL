@@ -323,7 +323,13 @@ class Routing:
     def convergance(db_operations):
         Routing.log("Convergence started...")
 
-
+        '''#(Extra code) To deal with not full replication
+        query = db_operations.DELETE_ALL_ROUTES
+        oper = []
+        oper.append(query)
+        db_operations.db_insert_operations(oper)
+        print("deleted")'''
+        
         route_list = Routing.getUpdatedGlobalRoutingRules(db_operations)
 
         # We need to evaluate the currant database state and
@@ -333,6 +339,7 @@ class Routing:
         # --Routes present on the database but not on the new route list must be deleted.
         query = db_operations.GET_ALL_CURRENT_ROUTES
         db_route_list = db_operations.db_select_operation(query,'')
+        print(db_route_list)
         # The route might not exist anymore
         operations = []
         for db_route in db_route_list:
@@ -341,7 +348,7 @@ class Routing:
             next_hop =  ''.join(chr(i) for i in db_route["nexthop"])
             switch_identifier_fk =  ''.join(chr(i) for i in db_route["switchidentifierfk"])
             identifier =   ''.join(chr(i) for i in db_route["identifier"])
-
+            print("Switch id:",switch_identifier_fk)
             route_exists = False
 
             for route in route_list[:]:
@@ -369,6 +376,7 @@ class Routing:
             Routing.log("Route to be insert on the database: " + route.network + "-> " + route.next_hop)
             query =  db_operations.INSERT_NEW_ROUTE
             queryargs = query.format(str(uuid.uuid4()), route.network, route.prefix_length,route.next_hop,route.metric, route.router_id)
+            #print("Router id: ",router.router_id)
             operations.append(queryargs)
 
         Routing.log("Convergence finished. Updating database...")
