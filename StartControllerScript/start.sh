@@ -30,7 +30,7 @@ screen -S AQL -d -m bash -c 'make shell;exec sh'
 #is executed. This script requires as argument every node
 #that we want to connect. Thats another reason why the machine's
 #IP is necessary
-sleep 4
+sleep 1
 echo "Connecting Controller to Switch with IP:"
 echo $PB_IP
 for ip in "$@"
