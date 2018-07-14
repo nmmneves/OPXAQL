@@ -19,7 +19,7 @@ cd ..
 cd AQL
 screen -S AQL -d -m bash -c 'make shell;exec sh'
 #make shell
-sleep 4
+sleep 2
 declare -i i=1
 for value in "$@"
 do
@@ -28,7 +28,7 @@ sudo ip addr add $value/24 dev e101-00${i}-0
 sudo ip link set dev e101-00${i}-0 up
 i+=1
 done
-sleep 2
+sleep 1
 echo "Starting Table Creation"
 cd ..
 sudo python createtablesswitch.py
