@@ -142,7 +142,6 @@ class Handler:
         if_identifier = self.get_if_id_from_name(interface.name)
         queryargs = query.format(interface.oper_status, if_identifier)
         operations.append(queryargs)
-        #print("Operstatus data handler: ",queryargs)
         self.db_operations.db_insert_operations(operations)
         self.log("Interfaces changes added to the database. Operstatus changed to: " + str(interface.oper_status) + " of: " + if_identifier)
 

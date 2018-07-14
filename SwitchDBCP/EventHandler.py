@@ -81,17 +81,13 @@ class DBMonitor:
         query = self.db_operations.GET_ROUTE_DATA
         args = (identifier)
         nrows = self.db_operations.db_select_operation(query, args)
-        print("Trying to insert")
         # The route might not exist anymore
         if not nrows:
             return
         else:            
             #(Extra code)This if is added to solve the problem of full replication
             ownid = dh.get_switch_by_physaddres()
-            #print("Ownid: ",ownid)
             switchidentifierfk = ''.join(chr(i) for i in nrows[0]["switchidentifierfk"])
-            #print("Switchident: ",switchidentifierfk)
-            #print(switchidentifierfk == ownid)
             if (switchidentifierfk == ownid):
                 route_prefix = ''.join(chr(i) for i in nrows[0]["routeprefix"])
                 prefix_len = nrows[0]["prefixlen"]
@@ -104,11 +100,10 @@ class DBMonitor:
 
     def delete_route(self,identifier,log_route_prefix,log_prefix_len):
         #(Extra code)This if is added to solve the problem of full replication
-        print("Trying to delete")
+        #print("Trying to delete")
         query = self.db_operations.GET_ROUTE_DATA
         args = (identifier)
         nrows = self.db_operations.db_select_operation(query, args)
-        print(nrows)
         # The route might not exist anymore
         if not nrows:
             return
@@ -127,17 +122,13 @@ class DBMonitor:
         query = self.db_operations.GET_ROUTE_DATA
         args = (identifier)
         nrows = self.db_operations.db_select_operation(query, args)
-        print("Trying to update")
         # The route might not exist anymore
         if not nrows:
             return
         else:
             #(Extra code)This if is added to solve the problem of full replication
             ownid = dh.get_switch_by_physaddres()
-            #print("Ownid: ",ownid)
             switchidentifierfk = ''.join(chr(i) for i in nrows[0]["switchidentifierfk"])
-            #print("Switchident: ",switchidentifierfk)
-            #print(switchidentifierfk == ownid)
             if (switchidentifierfk == ownid):
                 route_prefix = ''.join(chr(i) for i in nrows[0]["routeprefix"])
                 prefix_len = nrows[0]["prefixlen"]
