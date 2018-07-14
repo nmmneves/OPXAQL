@@ -6,8 +6,8 @@ Routing implemented with the help of Databases.
 
 1- Download Vagrant(2.1.2), Virtual Box(5.2.8) and VMWare WorkstationPro(14.1.2).
 
-Note: In Windows you might need to go "Manage Optional Features" in "Settings" and install OpenSSH Client and Server
-and also go to "Use Developer Features" e select Developer Mode.
+*Note: In Windows you might need to go "Manage Optional Features" in "Settings" and install OpenSSH Client and Server
+and also go to "Use Developer Features" e select Developer Mode.*
 
 2- Open Virtualbox.
 
@@ -59,9 +59,7 @@ chmod +x install.sh
 ```
 ./install.sh Switch
 ```
-**6-Start the switch/controller. The first time you run it may take a while since it's compiling and creating a Antidote release. It may also give a error (Connection aborted), and if it happens just run the script again. It's a know bug which is hard to solve.**
-
-**The start script for the switch receives IPs as arguments (as much as you want). Each IP will correspond to a single interface, starting with e101-001-0 and ending in e101-00X-0 where x is the number of IPs you've writen. For example:**
+**6-Start the switch/controller. The start script for the switch receives IPs as arguments (as much as you want). Each IP will correspond to a single interface, starting with e101-001-0 and ending in e101-00X-0 where x is the number of IPs you've writen. For example:**
 ```
 ./start 10.1.1.1 11.1.1.1
 ```
@@ -74,6 +72,8 @@ Setting Interface e101-002-0 Up with IP = 11.1.1.1
 ```
 ./start 192.168.1.1 192.168.1.2
 ```
+*The first time you run it may take a while since it's compiling and creating a Antidote release. It may also give a error (Connection aborted), and if it happens just run the script again. It's a know bug which is hard to solve.*
+
 **7-Copy/paste**
 ```
 sudo apt-get -y update &&
