@@ -8,8 +8,7 @@ then
  echo "Invalid name. Choose between Switch or Controller"
  exit
 fi
-sudo apt-get -y install build-essential && sudo apt-get -y update
-#&& sudo apt-get -y upgrade
+sudo apt-get -y install build-essential && sudo apt-get -y update && sudo apt-get -y upgrade
 wget erlang.org/download/otp_src_19.3.tar.gz
 tar zfx otp_src_19.3.tar.gz
 cd otp_src_19.3
@@ -40,11 +39,16 @@ sudo rm -rf otp_src_19.3.tar.gz
 sudo rm -rf otp_src_19.3
 sudo apt-get -y install python-pip
 sudo pip install networkx
-mv changetoinstall/antidote.erl antidote/src/ 
-mv changetoinstall/triggers.erl antidote/src/
+mv changetoinstall/antidote.erl antidote/src/
+if [ $1 = "Switch" ]; then
+ mv changetoinstall/triggers.erl antidote/src/
+else
+ mv changetoinstall2/triggers.erl antidote/src/
+fi
 mv changetoinstall/aqlparser.erl AQL/src/ 
 mv changetoinstall/aql_http_handler.erl AQL/src/
 rm -rf changetoinstall
+rm -rf changetoinstall2
 rm -rf OPXAQL
 rm README.md
 if [ $1 = "Switch" ]; then
