@@ -25,7 +25,7 @@ class Handler:
             oper_status = interface["operstatus"]
 
         if (oper_status == IF_OPER_STATUS_UP):
-            self.convergance()
+            #self.convergance()
             return #We must ignore IF coming up
 					
         self.log("Will delete all neighbour relations with interface: " + interface_id )
