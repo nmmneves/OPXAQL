@@ -31,6 +31,9 @@ end
 -https://askubuntu.com/questions/588426/how-to-export-and-import-virtualbox-vm-images
 
 8- Put file 80-dn-virt-intf.rules in the directory etc/udev/rules.d.
+```
+sudo mv 80-dn-virt-intf.rules /etc/udev/rules.d/
+```
 
 ### --------------------Instalation--------------------
 
