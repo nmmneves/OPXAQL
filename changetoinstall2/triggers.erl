@@ -112,13 +112,14 @@ prepare_update(ipvfourrib, ObjUpdate, Transaction) ->
     ?OBJECT_UPDATE(Key, Type, Bucket, _UpdateOp, _Updates) = ObjUpdate,
     BoundObject = {Key, Type, Bucket},
 
-    {OldRoutePrefix, OldPrefixLen, ActualNumCols} =
+    {OldRoutePrefix, OldPrefixLen, OldSwitchIdFk, ActualNumCols} =
         case table_utils:record_data(BoundObject, Transaction) of
             [] ->
-                {undefined, undefined, 0};
+                {undefined, undefined, "", 0};
             [OldRecord] ->
                 {table_utils:lookup_value(routeprefix, OldRecord),
                     table_utils:lookup_value(prefixlen, OldRecord),
+                    table_utils:lookup_value(switchidentifierfk, OldRecord),
                     length(OldRecord)}
         end,
 
@@ -130,10 +131,14 @@ prepare_update(ipvfourrib, ObjUpdate, Transaction) ->
     UpdNumCols = count_columns(ObjUpdate),
 
     NewOperation = new_operation(NewState, UpdNumCols, ActualNumCols),
+    NewSwitchIdentifierFk = case NewOperation of
+                                delete -> OldSwitchIdFk;
+                                _ -> ""
+                            end,
 
     LogTable = ipvfourribchangeslog,
     Update = ipvfourrib_column_update(LogTable, NewIdentifier, NewRoutePrefix,
-        NewPrefixLen, NewOperation, Transaction),
+        NewPrefixLen, NewOperation, NewSwitchIdentifierFk, Transaction),
 
     Update;
 
@@ -167,13 +172,15 @@ interfaceslog_column_update(TableName, ColName, _OldVal, _NewVal, NewIdentifier,
 
     [{{GenId, TableName}, ?TABLE_DT, {update, AllOps}}].
 
-ipvfourrib_column_update(TableName, NewIdentifier, NewRoutePrefix, NewPrefixLen, NewOperation, Transaction) ->
+ipvfourrib_column_update(TableName, NewIdentifier, NewRoutePrefix, NewPrefixLen,
+    NewOperation, NewSwitchIdentifierFK, Transaction) ->
+
     GenId = generate_pk(TableName, Transaction),
 
     Columns = ipvfourriblog_columns(),
     AllColNames = proplists:get_value(?COLUMNS, Columns),
 
-    ValuesToInsert = [GenId, NewIdentifier, NewRoutePrefix, NewPrefixLen, NewOperation],
+    ValuesToInsert = [GenId, NewIdentifier, NewRoutePrefix, NewPrefixLen, NewOperation, NewSwitchIdentifierFK],
 
     StateOp = {{?STATE_COL, ?STATE_COL_DT}, table_utils:to_insert_op(?CRDT_VARCHAR, 'i')},
 
@@ -214,10 +221,11 @@ ipvfourriblog_columns() ->
     RoutePrefixSpec = {routeprefix, ?AQL_VARCHAR, ignore},
     PrefixLenSpec = {prefixlen, ?AQL_INTEGER, ignore},
     OperationSpec = {operation, ?AQL_VARCHAR, ignore},
+    SwitchIdentifierSpec = {switchidentifierfk, ?AQL_VARCHAR, {default,""}},
 
     Columns = [{id, IdSpec}, {identifier, IdentifierSpec}, {routeprefix, RoutePrefixSpec},
-        {prefixlen, PrefixLenSpec}, {operation, OperationSpec}],
-    Columns ++ [{?PK_COLUMN, [id]}, {?COLUMNS, [id, identifier, routeprefix, prefixlen, operation]}].
+        {prefixlen, PrefixLenSpec}, {operation, OperationSpec}, {switchidentifierfk, SwitchIdentifierSpec}],
+    Columns ++ [{?PK_COLUMN, [id]}, {?COLUMNS, [id, identifier, routeprefix, prefixlen, operation, switchidentifierfk]}].
 
 %% Column specifications for the log table 'interfaceneighbourchangeslog'
 interfaceneighbourlog_columns() ->
