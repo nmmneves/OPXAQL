@@ -3,7 +3,6 @@ import requests
 class DBoperations:
     def db_insert_operations(self, querylist):
         for query in querylist:
-            #print(query)
             r = requests.post('http://localhost:3002/aql', data={'query':query})
             if(r.status_code != 200):
                 print("Something went wrong in:",query,r.reason)
@@ -11,17 +10,15 @@ class DBoperations:
     def db_select_operation(self, operation, args):
         if args:
             opwithargs = operation.format(args)
-            #print(opwithargs)
             r = requests.post('http://localhost:3002/aql', data={'query': opwithargs})
         else:
             r = requests.post('http://localhost:3002/aql', data={'query': operation})
-            #print(operation)
         if(r.status_code != 200):
             print("Something went wrong",operation,r.reason)
         result = r.json()[0]
         return result
 	
-	#QUERYS
+	#QUERYS(Original in SQL are commented)
 	
     #GET_ALL_NEIGHBOUR_SWITCH_RELATIONS = "select `interface_neighbour`.`switch_identifier_fk`,`interface_neighbour`.`phys-address`,interfaces.name  from `interface_neighbour` inner join interfaces on interfaces.identifier = `interface_neighbour`.`interface_id`"
     GET_ALL_INTERFACE_NEIGHBOUR = "SELECT interfaceid,switchidentifierfk,physaddress FROM interfaceneighbour"
@@ -74,53 +71,3 @@ class DBoperations:
 
     #DELETE_INTERFACE_NEIGHBOUR_LOG = """delete FROM `interface_neighbour-changes-log`"""
     DELETE_INTERFACE_NEIGHBOUR_LOG = "DELETE FROM interfaceneighbourchangeslog"
-
-"""    Extra code to deal with full replication
-    DELETE_ALL_ROUTES = "DELETE FROM ipvfourrib"
-
-import mysql.connector
-
-DATABASE_ACCESS_DATA_FILE = "Controller/database_config.txt"
-class DBoperations:
-    def __init__(self):
-
-        file = open(DATABASE_ACCESS_DATA_FILE, "r")
-        content = file.read().splitlines()
-        self.dbconfig = {
-            "user": str(content[0]),
-            "password": str(content[1]),
-            "host": str(content[2]),
-            "database": str(content[3])
-        }
-        file.close()
-
-        mysql.connector.connect(pool_name="mypool", pool_size=32, **self.dbconfig)
-
-    def db_insert_operations(self, oper_list):
-        cnx = mysql.connector.connect(pool_name="mypool")
-        try:
-            cursor = cnx.cursor()
-            for operation in oper_list:
-                cursor.execute(operation[0], operation[1])
-            cnx.commit()
-        except mysql.connector.Error as err:
-            print("Something went wrong: {}".format(err))
-
-        finally:
-            cursor.close()
-            cnx.close()
-
-    def db_select_operation(self, operation, args):
-        cnx = mysql.connector.connect(pool_name="mypool")
-        try:
-            cursor = cnx.cursor()
-            cursor.execute(operation, args)
-            result = cursor.fetchall()
-
-        except mysql.connector.Error as err:
-            print("Something went wrong: {}".format(err))
-        finally:
-            cursor.close()
-            cnx.close()
-            return result
-"""

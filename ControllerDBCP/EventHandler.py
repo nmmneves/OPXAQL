@@ -10,11 +10,10 @@ import cps
 import json
 import subprocess
 
-# Work thread.
 class DBMonitor:
 
     INTERFACES_OPERATION_STATUS = "operstatus"
-    SLEEP_DURATION = 0.1 #seconds.
+    SLEEP_DURATION = 0.1
 
     def __init__(self, queue):
         self.q = queue
@@ -32,7 +31,6 @@ class DBMonitor:
 
 
     def check_interfaces(self):
-        # Query database and retrieve all new entries.
         query = self.db_operations.GET_INTERFACES_CHANGES
         rows = self.db_operations.db_select_operation(query, '')
 
@@ -44,8 +42,6 @@ class DBMonitor:
             if update_type == self.INTERFACES_OPERATION_STATUS:
                 self.change_operation_status_interface(interface_id)
 
-            # It is assumed that the operations will not fail.
-            # Delete log entry
             self.clean_interface_log(log_id)
 
 
@@ -57,8 +53,6 @@ class DBMonitor:
         if (len(rows)>0):
             self.change_interface_neighbour()
 
-            # It is assumed that the operations will not fail.
-            # Delete log entry
             self.clean_all_interface_neighbour_log()
 
 
@@ -105,18 +99,14 @@ class DBMonitor:
     def log(self, data):
         Utils.cliLogger("[DBmonitor] " + data, 0)
 
-# Queue used to order events from the listeners.
 q = Queue()
 dh = Handler()
 
-
-# Start database monitor
 db_monitor = DBMonitor(q)
 thrd = Thread(target=db_monitor.changes_monitor, args=())
 thrd.start()
 
 while True:
-    # Execute the event from the worker threads.
     f, args, kwargs = q.get()
     f(*args, **kwargs)
     q.task_done()

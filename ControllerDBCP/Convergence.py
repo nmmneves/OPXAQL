@@ -339,7 +339,7 @@ class Routing:
         # --Routes present on the database but not on the new route list must be deleted.
         query = db_operations.GET_ALL_CURRENT_ROUTES
         db_route_list = db_operations.db_select_operation(query,'')
-        print(db_route_list)
+        #print(db_route_list)
         # The route might not exist anymore
         operations = []
         for db_route in db_route_list:
@@ -348,7 +348,7 @@ class Routing:
             next_hop =  ''.join(chr(i) for i in db_route["nexthop"])
             switch_identifier_fk =  ''.join(chr(i) for i in db_route["switchidentifierfk"])
             identifier =   ''.join(chr(i) for i in db_route["identifier"])
-            print("Switch id:",switch_identifier_fk)
+            #print("Switch id:",switch_identifier_fk)
             route_exists = False
 
             for route in route_list[:]:
@@ -359,7 +359,7 @@ class Routing:
                     #Existes on the database and new routes ----> remove from the new route list.
                     route_exists=True
                     route_list.remove(route)
-                    Routing.log("Route removed from the list: " + route_prefix + "-> " + next_hop + " " + route.router_id)
+                    #Routing.log("Route removed from the list: " + route_prefix + "-> " + next_hop + " " + route.router_id)
                     break
 
             if (route_exists==False):
