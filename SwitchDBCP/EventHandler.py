@@ -12,17 +12,13 @@ import cps
 import json
 import subprocess
 
-#LLDP configurations
 LLDP_TXHOLD = "3"
 LLDP_TXINTERVAL = "1"
 
-# Work thread.
 class DBMonitor:
     IPV4_INSERT = "insert"
     IPV4_DELETE = "delete"
     IPV4_UPDATE = "update"
-    #INTERFACES_IP = "ip"
-    #INTERFACES_ENABLED = "enabled"
 	
     SLEEP_DURATION = 0.05
     def __init__(self, queue):
@@ -35,18 +31,14 @@ class DBMonitor:
 
             self.check_ipv4rib()
 
-            #self.check_interfaces()
-
             time.sleep(self.SLEEP_DURATION)
 
     def check_ipv4rib(self):
 
-        # Query database and retrieve all new entries.
         query = self.db_operations.GET_ROUTE_DATA_LOG
         json = self.db_operations.db_select_operation(query, '')
 		
         for item in json:
-            # Unknow bug the makes variables type unicode instead of list of ascii
             log_id = int(item["id"])
             identifier =  item["identifier"].encode("ascii","ignore")
             operation =  item["operation"].encode("ascii","ignore")
@@ -56,20 +48,19 @@ class DBMonitor:
             else:
 			    log_route_prefix =  ''.join(chr(i) for i in test)
             log_prefix_len = int(item["prefixlen"])
+            switchidentifierfk = ''.join(chr(i) for i in item["switchidentifierfk"])
 
             if operation == self.IPV4_INSERT:
                 self.insert_route(identifier)
 
             #(Extra Code)Added identifier to solve full replication problems
             elif operation == self.IPV4_DELETE:
-                self.delete_route(identifier,log_route_prefix, log_prefix_len)
+                self.delete_route(switchidentifierfk,log_route_prefix, log_prefix_len)
 
             elif operation == self.IPV4_UPDATE:
                 # It is assumed that an update does not change the route_prefix and prefix_len
                 self.update_route(identifier, log_route_prefix, log_prefix_len)
 
-            # It is assumed that the add/delete route operation will not fail.
-            # Delete log entry
             operations = []
             query = self.db_operations.DELETE_ROUTE_LOG
             queryargs = query.format(log_id)
@@ -81,7 +72,6 @@ class DBMonitor:
         query = self.db_operations.GET_ROUTE_DATA
         args = (identifier)
         nrows = self.db_operations.db_select_operation(query, args)
-        # The route might not exist anymore
         if not nrows:
             return
         else:            
@@ -92,27 +82,18 @@ class DBMonitor:
                 route_prefix = ''.join(chr(i) for i in nrows[0]["routeprefix"])
                 prefix_len = nrows[0]["prefixlen"]
                 weight = nrows[0]["weight"]
-                if_name = ''#Avoiding using the outbound interface
+                if_name = ''
                 next_hop = ''.join(chr(i) for i in nrows[0]["nexthop"])
                 q.put((dh.add_route, (route_prefix, prefix_len, if_name, weight,next_hop), {}))
                 self.log("New route: route prefix: " + str(route_prefix) + " prefix length: " + str(prefix_len) + " weight: " + str(weight) + " next-hop: " + str(next_hop))
 
 
-    def delete_route(self,identifier,log_route_prefix,log_prefix_len):
-        #(Extra code)This if is added to solve the problem of full replication
-        #print("Trying to delete")
-        query = self.db_operations.GET_ROUTE_DATA
-        args = (identifier)
-        nrows = self.db_operations.db_select_operation(query, args)
-        # The route might not exist anymore
-        if not nrows:
-            return
-        else:
+    def delete_route(self,switchidentifierfk,log_route_prefix,log_prefix_len):
+            #Extra code added to fix full replication
             ownid = dh.get_switch_by_physaddres()
-            print("Ownid: ",ownid)
-            switchidentifierfk = ''.join(chr(i) for i in nrows[0]["switchidentifierfk"])
-            print("Switchident: ",switchidentifierfk)
-            print(switchidentifierfk == ownid)
+            #print("Ownid: ",ownid)
+            #print("Switchident: ",switchidentifierfk)
+            #print(switchidentifierfk == ownid)
             if (switchidentifierfk == ownid):
                 q.put((dh.del_route, (log_route_prefix, log_prefix_len), {}))
                 self.log("Delete route: route prefix: " + log_route_prefix + " prefix length: " + str(log_prefix_len))
@@ -122,7 +103,6 @@ class DBMonitor:
         query = self.db_operations.GET_ROUTE_DATA
         args = (identifier)
         nrows = self.db_operations.db_select_operation(query, args)
-        # The route might not exist anymore
         if not nrows:
             return
         else:
@@ -133,20 +113,15 @@ class DBMonitor:
                 route_prefix = ''.join(chr(i) for i in nrows[0]["routeprefix"])
                 prefix_len = nrows[0]["prefixlen"]
                 weight = nrows[0]["weight"]
-                if_name = ''#Avoiding using the outbound interface
+                if_name = ''
                 next_hop = ''.join(chr(i) for i in nrows[0]["nexthop"])
                 q.put((dh.update_route, (route_prefix, prefix_len, if_name, weight,next_hop), {}))
-        # Alternative
-        #self.delete_route(log_route_prefix,log_prefix_len)
-        #self.insert_route(identifier)
                 self.log("Updated route: route prefix: " + log_route_prefix + " prefix length: " + str(log_prefix_len))
 
     def log(self, data):
         Utils.cliLogger("[DBmonitor] " + data, 0)
 
-# Work thread.
 class LLDPEvent:
-
 
     NEIGHBOUR_UPDATE = "lldp-updated"
     NEIGHBOUR_DELETE = "lldp-deleted"
@@ -163,12 +138,10 @@ class LLDPEvent:
                 break
             yield line
 
-
     def lldp_watch_extractor(self):
         self.log("Configuring the LLDP protocol and starting neighbourhood listener...")
         counter = 0
         metadata = ""
-
 
         #Configuring LLDP
         subprocess.Popen(["sudo", "lldpcli","configure", "lldp", "tx-hold", LLDP_TXHOLD])
@@ -273,28 +246,22 @@ class CPSEvent:
         Utils.cliLogger("[CPS Event] "+ data,0)
 
 
-
-# Queue used to order events from the listeners.
 q = Queue()
 dh = Handler()
 
-# Start neighbour discovery work thread
 lldp_exctractor = LLDPEvent(q)
 thrd = Thread(target=lldp_exctractor.lldp_watch_extractor, args=())
 thrd.start()
 
-# Start CPS data monitor
 cps_event = CPSEvent(q)
 thrd = Thread(target=cps_event.monitor_events, args=())
 thrd.start()
 
-# Start database monitor
 db_monitor = DBMonitor(q)
 thrd = Thread(target=db_monitor.changes_monitor, args=())
 thrd.start()
 
 while True:
-    # Execute the event from the worker threads.
     f, args, kwargs = q.get()
     f(*args, **kwargs)
     q.task_done()

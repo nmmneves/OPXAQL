@@ -51,7 +51,6 @@ class DBoperations:
     GET_ROUTE_DATA_LOG = "SELECT * FROM ipvfourribchangeslog"
 
     GET_ROUTE_DATA = "SELECT routeprefix,prefixlen,weight,nexthop,switchidentifierfk FROM ipvfourrib WHERE identifier = \'{}\' "
-	#check
 	
     GET_INTERFACE_DATA_LOG = "SELECT id, interfaceidentifier,updatetype FROM interfaceschangeslog"
 
@@ -66,6 +65,7 @@ class DBoperations:
 	
     GET_IDENTIFIER_FROM_SWITCH_BY_PHYSADDRESS = "SELECT identifier FROM switch WHERE physaddress = \'{}\'"
 
+    #GET_ROUTE_DATA2 = "SELECT identifier FROM ipvfourrib"
 	
 
 

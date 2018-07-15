@@ -10,15 +10,8 @@ class Handler:
         self.db_operations = DBoperations()
 
     def get_if_id_from_name(self, if_name):
-        """
-        Queries and returns the UUID of an interface with specific name.
-        :param if_name: An interface name.
-        :return: The UUID of the switch or None if the interfaces does not exist in the model.
-        """
         query = self.db_operations.GET_IDENTIFIER_FROM_NAME
         results = self.db_operations.db_select_operation(query, if_name)
-        # If there is no result, this interface name does belong to the data model.
-        # Might happen with the management network interface name
         if not results:
             return None
         else:
@@ -27,10 +20,6 @@ class Handler:
 
 
     def get_switch_UUID(self):
-        """
-        Queries and returns the UUID of the switch.
-        :return: The UUID of the switch
-        """
         query = self.db_operations.GET_IDENTIFIER_FROM_SWITCH
         results = self.db_operations.db_select_operation(query, ())
         switch_uuid = ''.join(chr(i) for i in results[0]['identifier'])
@@ -39,13 +28,7 @@ class Handler:
 
 
     def add_neighbour(self, if_name, phys_address,remote_if_name):
-        """
-        Add new neighbour to the database.
-        :param if_name: The name of the interface with the neighbour operation.
-        :param phys_address: The physical address of the neighbour.
-        :return:
-        """
-        #Check neighbour presence
+	
         query = self.db_operations.GET_NEIGHBOUR_COUNT_FROM_PHYSADDRESS
         phys_address_to_ascii = [ord(c) for c in phys_address]
         results = self.db_operations.db_select_operation(query, phys_address_to_ascii)
@@ -54,16 +37,12 @@ class Handler:
         operations = []
         switch_id = self.get_switch_UUID()
         if not results:
-            # Add new neighbour
             query1 = self.db_operations.INSERT_NEIGHBOUR
             queryargs = query1.format(phys_address,switch_id)
             operations.append(queryargs)
 
-        # Add interface reference
         if_identifier = self.get_if_id_from_name(if_name)
 		
-        # If there is no result, this interface name does belong to the data model.
-        # Might happen with the management network interface name
         if not if_identifier:
            return 0;
         query2 = self.db_operations.INSERT_INTERFACE_NEIGHBOUR
@@ -75,11 +54,6 @@ class Handler:
 
 
     def del_neighbour(self, if_name):
-        """
-        Delete neighbours reference to the interfaces on the database.
-        :param if_name: The name of the interface with neighbour operation.
-        :return:
-        """
 
         # Delete just the relationship to the neighbour
         operations = []
@@ -92,52 +66,23 @@ class Handler:
 
 
     def add_route(self,route_prefix,prefix_len,if_name,weight,next_hop):
-        '''
 
-        :param route_prefix:
-        :param prefix_len:
-        :param if_name:
-        :param weight:
-        :param next_hop:
-        :return:
-        '''
-		
         cps_operations.addIpv4RouteEntry(route_prefix,prefix_len,if_name,weight,next_hop)
 
 
     def del_route(self,route_prefix,prefix_len):
-        """
 
-        :param route_prefix:
-        :param prefix_len:
-        :return:
-        """
         cps_operations.deleteIpv4RouteEntry(route_prefix, prefix_len)
 
     def update_route(self, route_prefix, prefix_len, if_name, weight,next_hop):
-        '''
-
-        :param route_prefix:
-        :param prefix_len:
-        :param if_name:
-        :param weight:
-        :param next_hop:
-        :return:
-        '''
 
         cps_operations.addIpv4RouteEntry(route_prefix, prefix_len, if_name, weight,next_hop)
         cps_operations.deleteIpv4RouteEntry(route_prefix, prefix_len)
 
 
     def change_interface(self, interface):
-        """
-        Change interface data on the database.
 
-        :param interface: An Interface object.
-        :return:
-        """
         operations = []
-        # Updating "oper-status" field only, for now.
         query = self.db_operations.UPDATE_INTERFACE_OPERSTATUS
         if_identifier = self.get_if_id_from_name(interface.name)
         queryargs = query.format(interface.oper_status, if_identifier)
@@ -146,10 +91,7 @@ class Handler:
         self.log("Interfaces changes added to the database. Operstatus changed to: " + str(interface.oper_status) + " of: " + if_identifier)
 
     def get_all_switch_data(self):
-        """
-        Get all current OPX switch data.
-        :return:
-        """
+	
         querylist = []
         phys_address = cps_operations.getChassisMac()
         managment_network = ExternalOperations.get_managment_network_ip()
@@ -168,17 +110,10 @@ class Handler:
         return identifier
 
     def get_all_interface_data(self):
-        """
-        Get all current interface data from CPS api and insert it on the database.
-        :return:
-        """
 
-        # Get switch UUID
         switch_uuid = self.get_switch_UUID()
-        # Get interface data
         interfaces = cps_operations.getAllInterfacesData()
         for interface in interfaces:
-            # Insert individually
             querylist = []
 
             if (interface.prefix_length==''):
@@ -198,10 +133,7 @@ class Handler:
 
 
     def get_all_current_neighbours(self):
-        """
-        Get all the current active neighbours data and insert it on the database.
-        :return:
-        """
+
         neighbourhood = ExternalOperations.lldp_extractor()
         numberneighbours = 0;
         for neighbour in neighbourhood:
