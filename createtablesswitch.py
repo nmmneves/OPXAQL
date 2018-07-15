@@ -7,4 +7,4 @@ r = requests.post('http://localhost:3002/aql', data={'query': 'CREATE AW TABLE i
 #only here because of replication
 r = requests.post('http://localhost:3002/aql', data={'query': 'CREATE AW TABLE interfaceneighbourchangeslog (id INTEGER PRIMARY KEY, interfaceidentifier VARCHAR)'})
 r = requests.post('http://localhost:3002/aql', data={'query': 'CREATE AW TABLE ipvfourrib (identifier VARCHAR PRIMARY KEY,routeprefix VARCHAR,prefixlen INTEGER,nexthop VARCHAR,weight INTEGER,interfaceidentifier VARCHAR DEFAULT \'\',switchidentifierfk VARCHAR FOREIGN KEY UPDATE-WINS REFERENCES switch (identifier))'})
-r = requests.post('http://localhost:3002/aql', data={'query': 'CREATE AW TABLE ipvfourribchangeslog (id INTEGER PRIMARY KEY,identifier VARCHAR,routeprefix VARCHAR,prefixlen INTEGER, operation VARCHAR)'})
+r = requests.post('http://localhost:3002/aql', data={'query': 'CREATE AW TABLE ipvfourribchangeslog (id INTEGER PRIMARY KEY,identifier VARCHAR,routeprefix VARCHAR,prefixlen INTEGER, operation VARCHAR,switchidentifierfk VARCHAR DEFAULT \'\')'})
