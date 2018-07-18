@@ -32,7 +32,6 @@ class Routing:
                             ip =  ''.join(chr(i) for i in result["ip"])
                             switch_id = ''.join(chr(i) for i in result["switchidentifierfk"])
                             if_name = ''.join(chr(i) for i in result["name"])
-                            #print(if_name,if_name_local,switch_id,next_hop)
                             if (if_name_local == if_name and switch_id == next_hop):
                                 exit_IP_array.extend([str(ip)])
 
@@ -59,51 +58,51 @@ class Routing:
             prefix_lenght = result["prefixlength"]
             switch_id = ''.join(chr(i) for i in result["switchidentifierfk"])
             oper_status = result["operstatus"]
-            #print("Going with IP: "+ str(ip) +"/"+str(prefix_lenght))
+            print("Going with IP: "+ str(ip) +"/"+str(prefix_lenght))
             #Get network from the IP and predix
             network = Utils.extractNetworkFromIpv4(ip,prefix_lenght)
             #Create a dictionary with all networks and associated switches
-            #print("Network: " + network)
+            print("Network: " + network)
             if (network not in networks_dict):
                 if(oper_status==1):
                     networks_dict[network] = [switch_id,]
-                    #print("oper_status = 1: " + network)
+                    print("oper_status = 1: " + network)
                 else:
-                    #print("oper_status != 1: " + network)
+                    print("oper_status != 1: " + network)
                     networks_dict[network] = [None, ]
             else:
 
                 switch_list = networks_dict[network]
                 if (oper_status == 1):#(Only operational interfaces i.e oper-status = 1)
-                    #print("oper_status = 1: " + network)
+                    print("oper_status = 1: " + network)
                     #If switch not associated with the network, then do it
                     if(switch_id not in switch_list):
                         switch_list.extend([switch_id])
                         networks_dict[network] = switch_list
                 else:
-                    #print("oper_status != 1: " + network)
+                    print("oper_status != 1: " + network)
                     switch_list.extend([None])
                     networks_dict[network] = switch_list
 
-        #for i in networks_dict:
-            #print (i, networks_dict[i])
+        for i in networks_dict:
+            print (i, networks_dict[i])
 
         #Remove networks not considered
         dummy_networks_dict = copy.deepcopy(networks_dict)
         for dummy_network in dummy_networks_dict:
-            #print("dummy:"+str(dummy_networks_dict[dummy_network]))
+            print("dummy:"+str(dummy_networks_dict[dummy_network]))
             for switch in dummy_networks_dict[dummy_network]:
                 if (switch is None):
-                    #print("-------"+str(dummy_network))
+                    print("-------"+str(dummy_network))
                     del networks_dict[dummy_network]
 
-        #print("-----All discovered reachable networks and by which switches------")
-        #for i in networks_dict:
-            #print (i, networks_dict[i])
+        print("-----All discovered reachable networks and by which switches------")
+        for i in networks_dict:
+            print(i, networks_dict[i])
 
-        #print("")
-        #print("")
-        #print("")
+        print("")
+        print("")
+        print("")
 
         #OK
 
@@ -113,9 +112,9 @@ class Routing:
 
         router_network_destination_view_dic = dict()
 
-        #print("-----Switch view of reachable networks by which switch---------")
+        print("-----Switch view of reachable networks by which switch---------")
 
-        #For every switch on the network
+        #for every switch on the network
         for switch in switches:
             switch_identifier = ''.join(chr(i) for i in switch["identifier"])
             single_router_network_destination_view_dic = copy.deepcopy(networks_dict)
@@ -132,19 +131,19 @@ class Routing:
             router_network_destination_view_dic[switch_identifier] = single_router_network_destination_view_dic
 
 
-            #print("switch: " + switch_identifier + "")
-            #for i in single_router_network_destination_view_dic:
-                #print(i, single_router_network_destination_view_dic[i])
-        #print("")
-        #print("")
-        #print("")
+            print("switch: " + switch_identifier + "")
+            for i in single_router_network_destination_view_dic:
+                print(i, single_router_network_destination_view_dic[i])
+        print("")
+        print("")
+        print("")
 
 
                 #OK
 
 #################################################4
         #Create a graph of the network
-        #print("----Paths created between nodes-----")
+        print("----Paths created between nodes-----")
         G = nx.DiGraph()
 
         #Get all switches on the network and their chassis MAC address
@@ -185,16 +184,16 @@ class Routing:
             if_name_local = result["name"]
             tempstring = str(''.join(chr(i) for i in result["physaddress"])).replace(":", "")
             switch_identifier_remote = switch_identifier_by_phy_address.get(tempstring)
-            #print("" + switch_identifier_local + "-->" + switch_identifier_remote)
+            print("" + switch_identifier_local + "-->" + switch_identifier_remote)
             G.add_edge(switch_identifier_local, switch_identifier_remote, name=if_name_local)
-        #print("")
-        #print("")
-        #print("")
+        print("")
+        print("")
+        print("")
 ###################################5
         ##Calculate shortes path to every other router
         ##Can be improved in terms of efficiency
 
-        #print("----Paths created by the shortest-path algorithm-----")
+        print("----Paths created by the shortest-path algorithm-----")
         paths_dict = dict()
         for orign in nodes_results:
             origin_id = ''.join(chr(i) for i in orign["identifier"])
@@ -206,23 +205,23 @@ class Routing:
                     path = nx.shortest_path(G, source=origin_id, target=destination_id)
 
                     paths_dict[origin_id].extend([path])
-                    #print(path)
+                    print(path)
                 except:
                     Routing.log("Path from " + origin_id + " to " + destination_id + " failed or does not exist")
 
 
-        #for i in paths_dict:
-            #print("Origin: " + i + "")
-            #listaa= paths_dict[i]
-            #for a in listaa:
-                #print(a)
+        for i in paths_dict:
+            print("Origin: " + i + "")
+            listaa= paths_dict[i]
+            for a in listaa:
+                print(a)
 
-        #print("")
-        #print("")
-        #print("")
+        print("")
+        print("")
+        print("")
 ################################6
         #Get next-hops by network for each router
-        #print("----Get next-hops by network for each router-----")
+        print("----Get next-hops by network for each router-----")
         final_router_network_destination_view_dic = copy.deepcopy(router_network_destination_view_dic)
         for router_id in router_network_destination_view_dic:
             single_router_network_destination_view_dic = router_network_destination_view_dic[router_id]
@@ -232,46 +231,46 @@ class Routing:
                 # If we have one, that is the next-hop
                 # If we have more than one we choose the one with shortest path
                 # If equal path than keep all equal for now
-                #print("-- Working now with switch "+ router_id + " and network " + network +" ---")
+                print("-- Working now with switch "+ router_id + " and network " + network +" ---")
                 candidate_router_list =  single_router_network_destination_view_dic[network]
                 #Get path with least cost(steps)
                 path_list = paths_dict[router_id]
                 smallest_cost= -1
                 candidate_smaller_cost = []
                 for candidate in candidate_router_list:
-                    #print("Trying candidate " + candidate)
+                    print("Trying candidate " + candidate)
                     # quantify the cost of this path
                     for path in path_list:
                         #if this path leads to candidate router
                         if(path[-1]==candidate):
                             cost=len(path)
-                            #print("This candidate has cost " + str(cost))
+                            print("This candidate has cost " + str(cost))
                             if (smallest_cost==-1):
-                                #print("Adding first cost candidate " + candidate)
+                                print("Adding first cost candidate " + candidate)
                                 smallest_cost=cost
                                 candidate_smaller_cost.extend([candidate])
                             elif(smallest_cost>cost):
-                                #print("Adding new cost candidate " + candidate)
+                                print("Adding new cost candidate " + candidate)
                                 smallest_cost=cost
                                 candidate_smaller_cost= [candidate,]
                             elif (smallest_cost == cost):
-                                #print("Adding equal cost candidate " + candidate)
+                                print("Adding equal cost candidate " + candidate)
                                 candidate_smaller_cost.extend([candidate])
-                #for candid in candidate_smaller_cost:
-                    #print ("Selected lower cost candidate: "+  candid)
+                for candid in candidate_smaller_cost:
+                    print ("Selected lower cost candidate: "+  candid)
 
                 #We have the shortest path cost so replace the candidates routers with next-hop switch identifiers
-                #print("Finished cost, now get the path and next-hop that have that lowest cost")
+                print("Finished cost, now get the path and next-hop that have that lowest cost")
                 next_hop_list = []
                 for path in path_list: #Cleary redundant
                     for candidate in candidate_smaller_cost:
 
                         if (path[-1] == candidate):
-                            #print("Getting next-hop for destination switch: " + candidate)
+                            print("Getting next-hop for destination switch: " + candidate)
                             if smallest_cost == 1:
                                 next_hop_list.extend([path[0]])#Get the only host(local)
                             else:
-                                #print("Path found for destinaiton: " + candidate + " with next-hop: "+ path[1])
+                                print("Path found for destinaiton: " + candidate + " with next-hop: "+ path[1])
                                 next_hop_list.extend([path[1]])#Get the next
                 final_router_network_destination_view_dic[router_id][network]=next_hop_list
         """
@@ -305,8 +304,8 @@ class Routing:
         """
 
         route_list=[]
-        #print("-------------------------List after next hop calc------------------------------")
-        #print(final_router_network_destination_view_dic)
+        print("-------------------------List after next hop calc------------------------------")
+        print(final_router_network_destination_view_dic)
         for router_id in final_router_network_destination_view_dic:
             for network in final_router_network_destination_view_dic[router_id]:
                 next_hop_IP = Routing.getNextHopIP(router_id, final_router_network_destination_view_dic[router_id][network],
@@ -316,19 +315,12 @@ class Routing:
                     route = Route(router_id, network, prefix_lenght, next_hop, 100)
                     route_list.extend([route])
                     break#We might get multiple available next-hops, for now we accept just one (any)
-        #print("End route list: ",route_list)
+        print("End route list: ",route_list)
         return route_list
 
     @staticmethod
     def convergance(db_operations):
         Routing.log("Convergence started...")
-
-        '''#(Extra code) To deal with not full replication
-        query = db_operations.DELETE_ALL_ROUTES
-        oper = []
-        oper.append(query)
-        db_operations.db_insert_operations(oper)
-        print("deleted")'''
         
         route_list = Routing.getUpdatedGlobalRoutingRules(db_operations)
 
@@ -337,9 +329,10 @@ class Routing:
         # --New route, not present on the database, must be inserted.
         # --Already present routes on the database are ignored
         # --Routes present on the database but not on the new route list must be deleted.
+		
         query = db_operations.GET_ALL_CURRENT_ROUTES
         db_route_list = db_operations.db_select_operation(query,'')
-        #print(db_route_list)
+        print(db_route_list)
         # The route might not exist anymore
         operations = []
         for db_route in db_route_list:
@@ -348,7 +341,7 @@ class Routing:
             next_hop =  ''.join(chr(i) for i in db_route["nexthop"])
             switch_identifier_fk =  ''.join(chr(i) for i in db_route["switchidentifierfk"])
             identifier =   ''.join(chr(i) for i in db_route["identifier"])
-            #print("Switch id:",switch_identifier_fk)
+            print("Switch id:",switch_identifier_fk)
             route_exists = False
 
             for route in route_list[:]:
@@ -359,7 +352,7 @@ class Routing:
                     #Existes on the database and new routes ----> remove from the new route list.
                     route_exists=True
                     route_list.remove(route)
-                    #Routing.log("Route removed from the list: " + route_prefix + "-> " + next_hop + " " + route.router_id)
+                    Routing.log("Route removed from the list: " + route_prefix + "-> " + next_hop + " " + route.router_id)
                     break
 
             if (route_exists==False):
@@ -376,7 +369,7 @@ class Routing:
             Routing.log("Route to be insert on the database: " + route.network + "-> " + route.next_hop)
             query =  db_operations.INSERT_NEW_ROUTE
             queryargs = query.format(str(uuid.uuid4()), route.network, route.prefix_length,route.next_hop,route.metric, route.router_id)
-            #print("Router id: ",router.router_id)
+            print("Router id: ",route.router_id)
             operations.append(queryargs)
 
         Routing.log("Convergence finished. Updating database...")

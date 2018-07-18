@@ -12,10 +12,11 @@ class Handler:
         self.db_operations = DBoperations()
 
     def interface_neighbour_change(self):
+        print("interface neighbour change")
         self.convergance()
 
     def interface_oper_status_change(self,interface_id):
-
+        print("interface operstatus change")
         query = self.db_operations.GET_INTERFACE_OPER_STATUS_BY_NAME_ID
         args = (interface_id)
         results = self.db_operations.db_select_operation(query, args)

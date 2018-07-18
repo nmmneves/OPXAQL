@@ -199,7 +199,7 @@ class cps_operations:
         if not ret:
             raise RuntimeError("Error   deleting   Route")
 
-        Utils.cliLogger("CPSOPErations: Deleted routed: " + route_prefix + "/" + str(prefix_len),0)
+        Utils.cliLogger("CPSOPErations: Deleted route: " + route_prefix + "/" + str(prefix_len),0)
 
     @staticmethod
     def getAllInterfacesData():

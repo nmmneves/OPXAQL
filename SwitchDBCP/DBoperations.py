@@ -64,8 +64,5 @@ class DBoperations:
 	#(Extra code) To deal with not full replication
 	
     GET_IDENTIFIER_FROM_SWITCH_BY_PHYSADDRESS = "SELECT identifier FROM switch WHERE physaddress = \'{}\'"
-
-    #GET_ROUTE_DATA2 = "SELECT identifier FROM ipvfourrib"
 	
-
-
+    GET_IDENTIFIER_FROM_NAME_AND_SWITCH = "SELECT identifier,switchidentifierfk FROM interfaces WHERE name = \'{}\'  AND  switchidentifierfk = \'{}\'"	
