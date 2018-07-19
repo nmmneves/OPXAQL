@@ -43,23 +43,26 @@ class Handler:
 		
         for result in switches:
             remote_switch_identifier = ''.join(chr(i) for i in result["identifier"])
-		
-        query = self.db_operations.GET_INTERFACE_BY_NAME_AND_ID
-        queryargs = query.format(remote_if_name,remote_switch_identifier)
-        interfaces = self.db_operations.db_select_operation(query, '')
-				
-        remote_interfaces_id = interfaces
+
+        query2 = self.db_operations.GET_INTERFACE_BY_NAME_SWITCH
+        #print(remote_if_name)
+        #print(remote_switch_identifier)
+        queryargs2 = query2.format(remote_if_name,remote_switch_identifier)
+        interfaces = self.db_operations.db_select_operation(queryargs2, '')
+        for interface in interfaces:
+                remote_interfaces_id = ''.join(chr(i) for i in interfaces[0]["identifier"])
         print("Remote Interface: ",remote_interfaces_id," Interface ID: ",interface_id)
         operations = []
-        
-        query = self.db_operations.DELETE_INTERFACE_NEIGHBOUR_BY_INTERFACEID
-        queryargs = query.format(interface_id)
-        operations.append(queryargs)
-
+		
         query2 = self.db_operations.DELETE_INTERFACE_NEIGHBOUR_BY_INTERFACEID
         queryargs2 = query2.format(remote_interfaces_id)
         operations.append(queryargs2)
-
+        self.db_operations.db_insert_operations(operations)
+        operations = [] 
+		
+        query = self.db_operations.DELETE_INTERFACE_NEIGHBOUR_BY_INTERFACEID
+        queryargs = query.format(interface_id)
+        operations.append(queryargs)
         self.db_operations.db_insert_operations(operations)
 
         self.convergance()

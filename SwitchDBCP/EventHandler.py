@@ -50,13 +50,11 @@ class DBMonitor:
             log_prefix_len = int(item["prefixlen"])
             switchidentifierfk = ''.join(chr(i) for i in item["switchidentifierfk"])
 
-            if operation == self.IPV4_INSERT:
-                self.insert_route(identifier)
-
             #(Extra Code)Added identifier to solve full replication problems
-            elif operation == self.IPV4_DELETE:
-                self.delete_route(switchidentifierfk,log_route_prefix, log_prefix_len)
-
+            if operation == self.IPV4_DELETE:
+                self.delete_route(identifier,switchidentifierfk,log_route_prefix, log_prefix_len)
+            elif operation == self.IPV4_INSERT:
+                self.insert_route(identifier)
             elif operation == self.IPV4_UPDATE:
                 # It is assumed that an update does not change the route_prefix and prefix_len
                 self.update_route(identifier, log_route_prefix, log_prefix_len)
@@ -88,13 +86,16 @@ class DBMonitor:
                 self.log("New route: route prefix: " + str(route_prefix) + " prefix length: " + str(prefix_len) + " weight: " + str(weight) + " next-hop: " + str(next_hop))
 
 
-    def delete_route(self,switchidentifierfk,log_route_prefix,log_prefix_len):
+    def delete_route(self,identifier,switchidentifierfk,log_route_prefix,log_prefix_len):
             #Extra code added to fix full replication
             ownid = dh.get_switch_by_physaddres()
             #print("Ownid: ",ownid)
             #print("Switchident: ",switchidentifierfk)
             #print(switchidentifierfk == ownid)
-            if (switchidentifierfk == ownid):
+            query = self.db_operations.GET_ROUTE_DATA
+            queryargs = query.format(identifier)
+            result = self.db_operations.db_select_operation(query,'')
+            if switchidentifierfk == ownid and not result :
                 q.put((dh.del_route, (log_route_prefix, log_prefix_len), {}))
                 self.log("Delete route: route prefix: " + log_route_prefix + " prefix length: " + str(log_prefix_len))
 

@@ -75,27 +75,19 @@ class Handler:
         cps_operations.deleteIpv4RouteEntry(route_prefix, prefix_len)
 
     def update_route(self, route_prefix, prefix_len, if_name, weight,next_hop):
-
-        cps_operations.addIpv4RouteEntry(route_prefix, prefix_len, if_name, weight,next_hop)
+	
         cps_operations.deleteIpv4RouteEntry(route_prefix, prefix_len)
-
+        cps_operations.addIpv4RouteEntry(route_prefix, prefix_len, if_name, weight,next_hop)
 
     def change_interface(self, interface):
 
         operations = []
 		#Extra code to deal with full replication
-        #query = self.db_operations.GET_IDENTIFIER_FROM_NAME
-        #results = self.db_operations.db_select_operation(query,interface.name)
-        #switchident = ''.join(chr(i) for i in results[0]['switchidentifierfk'])
-        #ownid = self.get_switch_by_physaddres()
-        #print("Own id: ", ownid," Ident: ",switchident)
-        #if(ownid == switchident):
         query = self.db_operations.GET_IDENTIFIER_FROM_NAME_AND_SWITCH
         ownid = self.get_switch_by_physaddres()
         queryargs = query.format(interface.name,ownid)
         results = self.db_operations.db_select_operation(queryargs,'')
         if_identifier = ''.join(chr(i) for i in results[0]['identifier'])
-        #print(if_identifier)
         #----------------------------------------------------------------
         query = self.db_operations.UPDATE_INTERFACE_OPERSTATUS
         queryargs = query.format(interface.oper_status, if_identifier)

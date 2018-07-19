@@ -361,6 +361,8 @@ class Routing:
                 query = db_operations.DELELE_ROUTE_BY_IDENTIFIER
                 queryargs = query.format(identifier)
                 operations.append(queryargs)
+                db_operations.db_insert_operations(operations)
+                operations = []
                 Routing.log("Route removed from the database: " + route_prefix + "-> "+next_hop)
 
         # Go on with the rest operations
@@ -369,12 +371,14 @@ class Routing:
             Routing.log("Route to be insert on the database: " + route.network + "-> " + route.next_hop)
             query =  db_operations.INSERT_NEW_ROUTE
             queryargs = query.format(str(uuid.uuid4()), route.network, route.prefix_length,route.next_hop,route.metric, route.router_id)
-            print("Router id: ",route.router_id)
             operations.append(queryargs)
+            print("Router id: ",route.router_id)
+            db_operations.db_insert_operations(operations)
+            operations = []
+         
 
         Routing.log("Convergence finished. Updating database...")
         #Utils.timeLogger()
-        db_operations.db_insert_operations(operations)
         Routing.log("Database update finished...")
 		
     @staticmethod

@@ -51,10 +51,10 @@ class DBMonitor:
         rows = self.db_operations.db_select_operation(query, '')
 
         if (len(rows)>0):
+            print("EventHandler line54:",rows[0]['interfaceidentifier'].encode("ascii","ignore"))
             self.change_interface_neighbour()
 
             self.clean_all_interface_neighbour_log()
-
 
     def clean_interface_log(self,log_id):
 
