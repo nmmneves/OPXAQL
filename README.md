@@ -41,7 +41,7 @@ This represents the basic tutorial to install a Switch and a Controller (will be
 
 **1- Make sure you have the lastest git version installed and up to date**
 
-*Note: It may be necessary to set up the date manually since it may not be the current date. Other option is to install ntp, which updates it automatically**
+*Note: It may be necessary to set up the date manually since it may not be the current date. Other option is to install ntp, which updates it automatically(sudo apt-get install ntp).*
 ```
 sudo apt-get install -y git
 ```
