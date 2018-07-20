@@ -61,7 +61,7 @@ class DBoperations:
     UPDATE_INTERFACE_OPERSTATUS = "UPDATE interfaces SET operstatus ASSIGN {} WHERE identifier = \'{}\'"
      
 	#GET_NEIGHBOUR_COUNT_FROM_PHYSADDRESS = "select count(*) from `neighbours` where `phys-address` = %s"
-	#(Extra code) To deal with not full replication
+	#(Extra code) To deal with full replication
 	
     GET_IDENTIFIER_FROM_SWITCH_BY_PHYSADDRESS = "SELECT identifier FROM switch WHERE physaddress = \'{}\'"
 	

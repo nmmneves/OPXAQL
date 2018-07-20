@@ -1,7 +1,4 @@
-import shutil
-import sys
 from SwitchDBCP.DataHandler import Handler
-from SwitchDBCP.Utils import Utils
 
 han = Handler()
 

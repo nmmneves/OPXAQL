@@ -93,6 +93,7 @@ class Handler:
         queryargs = query.format(interface.oper_status, if_identifier)
         operations.append(queryargs)
         self.db_operations.db_insert_operations(operations)
+        Utils.timeLogger("DataHandler| Database Insertion: ")
         self.log("Interfaces changes added to the database. Operstatus changed to: " + str(interface.oper_status) + " of: " + if_identifier)
 
     def get_all_switch_data(self):

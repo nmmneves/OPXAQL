@@ -14,12 +14,40 @@ from SwitchDBCP.Interface import Interface
 class cps_operations:
 
     @staticmethod
-    def getIfIndexFromName(name):
-        """
+    def setInterfaceName():
+        return 1
 
-        :param name:
-        :return:
-        """
+    @staticmethod
+    def setInterfaceMAC():
+        return 1
+
+    @staticmethod
+    def setInterfaceMTU():
+        return 1
+
+    @staticmethod
+    def setInterfaceType():
+        return 1
+		
+    @staticmethod
+    def setInterfaceLinkSpeed():
+        return 1
+
+    @staticmethod
+    def setSwitchId():
+        return 1
+
+    @staticmethod
+    def setSwitchIp():
+        return 1
+
+    @staticmethod
+    def setSwitchName():
+        return 1
+
+    @staticmethod
+    def getIfIndexFromName(name): 
+
         list = []
         # Obtain a list with objects from dell-base-if-cmn/if/interfaces/interface
         cps.get([cps.key_from_name('target', 'dell-base-if-cmn/if/interfaces/interface')], list)
@@ -34,13 +62,6 @@ class cps_operations:
 
     @staticmethod
     def setInterfaceIpAddress(if_name, ip_addr, pfix_len):
-        """
-
-        :param if_name:
-        :param ip_addr:
-        :param pfix_len:
-        :return:
-        """
 
         # Populate the attributes for the CPS Object
         # From the arguments
@@ -63,30 +84,8 @@ class cps_operations:
 
 
     @staticmethod
-    def setInterfaceName():
-        return 1
-
-    @staticmethod
-    def setInterfaceMAC():
-        return 1
-
-    @staticmethod
-    def setInterfaceMTU():
-        return 1
-
-    @staticmethod
-    def setInterfaceType():
-        return 1
-
-    @staticmethod
     def setInterfaceAdminLinkState(if_name, state):
-        """
 
-        :param if_name:
-        :param state:
-        :return:
-        """
-        # setInterfaceAdminLinkState('e101-002-0', 1)
         cps_obj = cps_object.CPSObject('dell-base-if-cmn/if/interfaces/interface')
 
         cps_obj.add_attr('if/interfaces/interface/name', if_name)
@@ -102,32 +101,10 @@ class cps_operations:
 
         Utils.cliLogger("CPSOPErations: Changed interface state: " + if_name + " to " + str(state), 0)
 
-    @staticmethod
-    def setInterfaceLinkSpeed():
-        return 1
-
-    @staticmethod
-    def setSwitchId():
-        return 1
-
-    @staticmethod
-    def setSwitchIp():
-        return 1
-
-    @staticmethod
-    def setSwitchName():
-        return 1
-
+  
     @staticmethod
     def addIpv4RouteEntry(route_prefix, prefix_len, if_name, weight,next_hop):
-        """
-
-        :param ip_addr:
-        :param ip_prefix:
-        :param interface_name:
-        :param metric:
-        :return:
-        """
+        
         version = 'ipv4'
 
         obj = cps_utils.CPSObject('base-route/obj/entry')
@@ -162,7 +139,7 @@ class cps_operations:
             print("[CPSOperations]Error Creating Route")
             return
 
-        Utils.timeLogger()
+        Utils.timeLogger("CPSOperations| CPS add route:")
         Utils.cliLogger("New route: " + str(route_prefix) + "/" + str(prefix_len) + " interface: " + str(if_name) + " metric " + str(weight),0)
 
 
@@ -170,12 +147,7 @@ class cps_operations:
 
     @staticmethod
     def deleteIpv4RouteEntry(route_prefix, prefix_len):
-        """
-        Delete and IPv4 route entry
-        :param ip_addr: The ip address of the route.
-        :param ip_prefix:
-        :return:
-        """
+
         # deleteIpv4RouteEntry("10.1.1.0", 24)
         ip_version = "ipv4"
 
@@ -199,14 +171,11 @@ class cps_operations:
         if not ret:
             raise RuntimeError("Error   deleting   Route")
 
+        Utils.timeLogger("CPSOperations| CPS delete route:")
         Utils.cliLogger("CPSOPErations: Deleted route: " + route_prefix + "/" + str(prefix_len),0)
 
     @staticmethod
     def getAllInterfacesData():
-        """
-        Acquire all current interfaces data.
-        :return:  A list of Interface objects.
-        """
 
         list = []
         interfaces = []
@@ -279,10 +248,7 @@ class cps_operations:
 
     @staticmethod
     def getChassisMac():
-        """
 
-        :return: The physical address of the switch chassis.
-        """
         list = []
         # Obtain a list with objects from dell-base-if-cmn/if/interfaces/interface
         cps.get([cps.key_from_name('target', 'base-pas/chassis')], list)

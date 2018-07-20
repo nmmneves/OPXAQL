@@ -37,7 +37,8 @@ class DBMonitor:
 
         query = self.db_operations.GET_ROUTE_DATA_LOG
         json = self.db_operations.db_select_operation(query, '')
-		
+        if json:
+            Utils.timeLogger("EventHandler| Route modification detected: ")
         for item in json:
             log_id = int(item["id"])
             identifier =  item["identifier"].encode("ascii","ignore")
@@ -240,6 +241,7 @@ class CPSEvent:
                                 Utils.cliLogger(if_name, 1)
                                 Utils.cliLogger(0, 1)
                                 interface = Interface(if_name, "", 0, "", "", oper_status, "","","")
+                                Utils.timeLogger("EventHandler| CPS event Operstatus changed: "))
                                 q.put((dh.change_interface, (interface,), {}))
                                 #self.log("Operstatus changed: " + str(oper_status) + " Interface: " + if_name)
 

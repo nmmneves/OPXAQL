@@ -1,9 +1,5 @@
 import time
-
 import os
-
-import errno
-
 
 class Utils:
 
@@ -20,14 +16,11 @@ class Utils:
         return
 
     @staticmethod
-    def timeLogger():
-          start = time.time()
-     #   directory = "SwitchDBCP/Log"
-     #   if not os.path.exists(directory):
-     #       os.makedirs(directory)
-
-     #   with open("SwitchDBCP/Log/times.txt", "a!") as myfile:
-     #       myfile.write(str(start)+'\n')
-     #       myfile.close()
-
-
+    def timeLogger(text):
+        start = time.time()
+        directory = "SwitchDBCP/Log"
+        if not os.path.exists(directory):
+            os.makedirs(directory)
+        with open("SwitchDBCP/Log/times.txt", "a!") as myfile:
+            myfile.write(text + str(start)+'\n')
+            myfile.close()
