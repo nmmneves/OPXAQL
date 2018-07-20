@@ -37,7 +37,7 @@ sudo mv 80-dn-virt-intf.rules /etc/udev/rules.d/
 
 ### --------------------Instalation--------------------
 
-This represents the basic tutorial to install a Switch and a Controller (will be updated with more detail in a short period of time). In the end of this explination there is a copy/paste segment with all the commands so you dont have to run one by one, excluding the start.
+In the next steps it's explained how  to install both Switch and Controller. In the end of this tutorial there is a copy/paste segment with all the commands so you dont have to run one by one, excluding the start.
 
 **1- Make sure you have the lastest git version installed and up to date**
 
