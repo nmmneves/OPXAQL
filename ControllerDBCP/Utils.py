@@ -1,10 +1,6 @@
-import networkx as nx
-#import matplotlib
+import time
 import os
 
-#matplotlib.use('Agg')
-#import matplotlib.pyplot as plt
-import time
 class Utils:
 
     @staticmethod
@@ -12,12 +8,22 @@ class Utils:
         # Different levels of debug output.
         if (level == 0):
             start = time.time()
-            print("[" + str(start) + "]" + text)
+            print("["+str(start) + "]"+ text)
 
-        # if (level == 1):
-        # print(text)
+        #if (level == 1):
+            #print(text)
 
         return
+		
+    @staticmethod
+    def timeLogger(text):
+        start = time.time()
+        directory = "ControllerDBCP/Log"
+        if not os.path.exists(directory):
+            os.makedirs(directory)
+        with open("ControllerDBCP/Log/times.txt", "a!") as myfile:
+            myfile.write(text + str(start)+'\n')
+            myfile.close()
 
     @staticmethod
     def extractNetworkFromIpv4(ip, prefix):

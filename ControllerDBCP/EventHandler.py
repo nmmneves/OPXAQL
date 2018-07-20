@@ -13,7 +13,7 @@ import subprocess
 class DBMonitor:
 
     INTERFACES_OPERATION_STATUS = "operstatus"
-    SLEEP_DURATION = 0.1
+    SLEEP_DURATION = 0.04
 
     def __init__(self, queue):
         self.q = queue
@@ -33,7 +33,9 @@ class DBMonitor:
     def check_interfaces(self):
         query = self.db_operations.GET_INTERFACES_CHANGES
         rows = self.db_operations.db_select_operation(query, '')
-
+        if rows:
+            Utils.timeLogger("---------------New Event---------------")
+            Utils.timeLogger("EventHandler| Detected Event Interface Change: ")
         for row in rows:
             log_id = row["id"]
             interface_id = row["interfaceidentifier"].encode("ascii","ignore")
@@ -46,12 +48,13 @@ class DBMonitor:
 
 
     def check_interfaces_neighbour(self):
-        # Query database and retrieve all new entries.
         query = self.db_operations.GET_INTERFACES_NEIGHBOUR_CHANGES
         rows = self.db_operations.db_select_operation(query, '')
 
+        if rows:
+            Utils.timeLogger("---------------New Event---------------")
+            Utils.timeLogger("EventHandler| Detected Event Interface Neighbour Change: ")
         if (len(rows)>0):
-            print("EventHandler line54:",rows[0]['interfaceidentifier'].encode("ascii","ignore"))
             self.change_interface_neighbour()
 
             self.clean_all_interface_neighbour_log()
@@ -89,12 +92,10 @@ class DBMonitor:
     def change_operation_status_interface(self, interface_id):
         q.put((dh.interface_oper_status_change, (interface_id,), {}))
         self.log("Interface operation state changed: "+interface_id )
-        #Utils.timeLogger()
 
     def change_interface_neighbour(self,):
         q.put((dh.interface_neighbour_change, (), {}))
         self.log("Neighbour relationship changed!")
-        #Utils.timeLogger()
 
     def log(self, data):
         Utils.cliLogger("[DBmonitor] " + data, 0)

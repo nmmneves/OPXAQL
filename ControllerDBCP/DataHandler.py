@@ -12,11 +12,9 @@ class Handler:
         self.db_operations = DBoperations()
 
     def interface_neighbour_change(self):
-        print("interface neighbour change")
         self.convergance()
 
     def interface_oper_status_change(self,interface_id):
-        print("interface operstatus change")
         query = self.db_operations.GET_INTERFACE_OPER_STATUS_BY_NAME_ID
         args = (interface_id)
         results = self.db_operations.db_select_operation(query, args)
@@ -45,13 +43,11 @@ class Handler:
             remote_switch_identifier = ''.join(chr(i) for i in result["identifier"])
 
         query2 = self.db_operations.GET_INTERFACE_BY_NAME_SWITCH
-        #print(remote_if_name)
-        #print(remote_switch_identifier)
+
         queryargs2 = query2.format(remote_if_name,remote_switch_identifier)
         interfaces = self.db_operations.db_select_operation(queryargs2, '')
         for interface in interfaces:
                 remote_interfaces_id = ''.join(chr(i) for i in interfaces[0]["identifier"])
-        print("Remote Interface: ",remote_interfaces_id," Interface ID: ",interface_id)
         operations = []
 		
         query2 = self.db_operations.DELETE_INTERFACE_NEIGHBOUR_BY_INTERFACEID
