@@ -143,13 +143,30 @@ prepare_update(ipvfourrib, ObjUpdate, Transaction) ->
     Update;
 
 prepare_update(interfaceneighbour, ObjUpdate, Transaction) ->
-    ?OBJECT_UPDATE(Key, _Type, _Bucket, _UpdateOp, _Updates) = ObjUpdate,
+    ?OBJECT_UPDATE(Key, Type, Bucket, _UpdateOp, _Updates) = ObjUpdate,
+    BoundObject = {Key, Type, Bucket},
+
+    ActualNumCols =
+        case table_utils:record_data(BoundObject, Transaction) of
+            [] ->
+                0;
+            [OldRecord] ->
+                length(OldRecord)
+        end,
 
     NewInterfaceId = Key,
+    NewState = new_column_value(?STATE_COL, ObjUpdate, undefined),
+    UpdNumCols = count_columns(ObjUpdate),
+    NewOperation = new_operation(NewState, UpdNumCols, ActualNumCols),
 
-    LogTable = interfaceneighbourchangeslog,
-    Update = interfaceneighbourlog_column_update(LogTable, NewInterfaceId, Transaction),
-    Update.
+    case NewOperation of
+        insert ->
+            LogTable = interfaceneighbourchangeslog,
+            Update = interfaceneighbourlog_column_update(LogTable, NewInterfaceId, Transaction),
+            Update;
+        _ ->
+            []
+    end.
 
 %% The two functions below update each one a log table.
 %% Each one creates all necessary operations to insert
