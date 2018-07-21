@@ -51,6 +51,7 @@ rm -rf changetoinstall
 rm -rf changetoinstall2
 rm -rf OPXAQL
 rm README.md
+rm 80-dn-virt-intf.rules
 if [ $1 = "Switch" ]; then
  sudo rm -rf ControllerDBCP
  rm createtablescontroller.py
