@@ -64,7 +64,7 @@ else
  sudo rm -rf StartSwitchScript
  mv StartControllerScript/start.sh .
  rm -rf StartControllerScript
- rm interfacestatechange.py
+ rm switchInterfaceStateChange.py
  chmod +x join_dcs_script.erl
 fi
 chmod +x start.sh
