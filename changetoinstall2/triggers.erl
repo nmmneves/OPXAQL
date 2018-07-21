@@ -19,7 +19,6 @@ create_triggers(Updates) ->
             ?RECORD_UPD_TYPE ->
                 case Bucket of
                     interfaces -> register_trigger(Bucket, log_interfaces_trigger);
-                    ipvfourrib -> register_trigger(Bucket, log_interfaces_trigger);
                     interfaceneighbour -> register_trigger(Bucket, log_interfaces_trigger);
                     _ -> ok
                 end;
