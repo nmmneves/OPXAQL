@@ -90,9 +90,6 @@ class DBMonitor:
     def delete_route(self,identifier,switchidentifierfk,log_route_prefix,log_prefix_len):
             #Extra code added to fix full replication
             ownid = dh.get_switch_by_physaddres()
-            #print("Ownid: ",ownid)
-            #print("Switchident: ",switchidentifierfk)
-            #print(switchidentifierfk == ownid)
             query = self.db_operations.GET_ROUTE_DATA
             queryargs = query.format(identifier)
             result = self.db_operations.db_select_operation(query,'')
@@ -189,9 +186,11 @@ class LLDPEvent:
                         #q.put((dh.update_neighbour, (if_name, origin_mac,), {}))
                         #self.log("update: Interface: " + if_name + " from: "+ origin_mac + " with managment ip: "+mgmt_ip)
                     elif lldp_operation == self.NEIGHBOUR_DELETE:
+                        Utils.timeLogger("EventHandler| LLPD Deleting Neighbour: ")
                         q.put((dh.del_neighbour, (if_name,), {}))
                         #self.log("Delete: Interface: " + if_name """+ " from: " + remote_chassis_mac""")
                     elif lldp_operation == self.NEIGHBOUR_ADDED:
+                        Utils.timeLogger("EventHandler| LLPD Adding Neighbour: ")
                         q.put((dh.add_neighbour, (if_name, remote_chassis_mac,remote_if_name), {}))
                         #self.log("Create: Interface: " + if_name + """" from: " + remote_chassis_mac +""" " with managment ip: " + mgmt_ip)
     def log(self,data):
@@ -241,7 +240,7 @@ class CPSEvent:
                                 Utils.cliLogger(if_name, 1)
                                 Utils.cliLogger(0, 1)
                                 interface = Interface(if_name, "", 0, "", "", oper_status, "","","")
-                                Utils.timeLogger("EventHandler| CPS event Operstatus changed: "))
+                                Utils.timeLogger("EventHandler| CPS event Operstatus changed: ")
                                 q.put((dh.change_interface, (interface,), {}))
                                 #self.log("Operstatus changed: " + str(oper_status) + " Interface: " + if_name)
 
