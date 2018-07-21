@@ -30,7 +30,7 @@ cd ..
 git clone https://github.com/pedromslopes/AQL.git
 cd AQL
 if [ $1 = "Switch" ]; then
- git checkout new_features
+ git checkout dd16fe21d51dd979b228c7cfa3312e7f543a3fda
 else
  git checkout eb68cfa20c89187e2b26a0d47b99e46be0b978e9
 fi
