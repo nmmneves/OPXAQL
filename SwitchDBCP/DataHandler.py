@@ -9,9 +9,10 @@ class Handler:
     def __init__(self):
         self.db_operations = DBoperations()
 
-    def get_if_id_from_name(self, if_name):
-        query = self.db_operations.GET_IDENTIFIER_FROM_NAME
-        results = self.db_operations.db_select_operation(query, if_name)
+    def get_if_id_from_name(self, if_name,switch_id):
+        query = self.db_operations.GET_IDENTIFIER_FROM_NAME_AND_SWITCH
+        queryargs = query.format(if_name,switch_id)
+        results = self.db_operations.db_select_operation(queryargs,'')
         if not results:
             return None
         else:
@@ -28,20 +29,19 @@ class Handler:
 
 
     def add_neighbour(self, if_name, phys_address,remote_if_name):
-	
         query = self.db_operations.GET_NEIGHBOUR_COUNT_FROM_PHYSADDRESS
         phys_address_to_ascii = [ord(c) for c in phys_address]
         results = self.db_operations.db_select_operation(query, phys_address_to_ascii)
 
         # If the neighbour already exists, just add the reference.
         operations = []
-        switch_id = self.get_switch_UUID()
+        switch_id = self.get_switch_by_physaddres()
         if not results:
             query1 = self.db_operations.INSERT_NEIGHBOUR
             queryargs = query1.format(phys_address,switch_id)
             operations.append(queryargs)
 
-        if_identifier = self.get_if_id_from_name(if_name)
+        if_identifier = self.get_if_id_from_name(if_name,switch_id)
 		
         if not if_identifier:
            return 0;
@@ -58,7 +58,8 @@ class Handler:
         # Delete just the relationship to the neighbour
         operations = []
         query = self.db_operations.DELETE_INTERFACE_NEIGHBOUR_BY_INTERFACEID
-        if_identifier = self.get_if_id_from_name(if_name)
+        switch_id = self.get_switch_by_physaddres()
+        if_identifier = self.get_if_id_from_name(if_name,switch_id)
         queryargs = query.format(if_identifier)
         operations.append(query)
         self.db_operations.db_insert_operations(operations)
@@ -117,8 +118,7 @@ class Handler:
     #-----------------------------------------------------------------
 
     def get_all_interface_data(self):
-
-        switch_uuid = self.get_switch_UUID()
+        switch_uuid = self.get_switch_by_physaddres()
         interfaces = cps_operations.getAllInterfacesData()
         for interface in interfaces:
             querylist = []

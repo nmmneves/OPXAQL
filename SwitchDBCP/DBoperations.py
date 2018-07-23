@@ -42,7 +42,7 @@ class DBoperations:
 
     DELETE_INTERFACE_LOG = "DELETE FROM interfaceschangeslog WHERE id = {}"
 		
-    GET_IDENTIFIER_FROM_NAME = "SELECT identifier,switchidentifierfk FROM interfaces WHERE name = \'{}\'"
+    GET_IDENTIFIER_FROM_NAME = "SELECT identifier,switchidentifierfk FROM interfaces WHERE name = \'{}\' AND switchidentifierfk = \'{}\'"
 
     GET_IDENTIFIER_FROM_SWITCH = "SELECT identifier FROM switch"
 
