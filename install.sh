@@ -70,5 +70,6 @@ else
 fi
 chmod +x start.sh
 chmod +x stop.sh
+rm install.sh
 
 
