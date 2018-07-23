@@ -50,13 +50,10 @@ class DBMonitor:
     def check_interfaces_neighbour(self):
         query = self.db_operations.GET_INTERFACES_NEIGHBOUR_CHANGES
         rows = self.db_operations.db_select_operation(query, '')
-
         if rows:
             Utils.timeLogger("---------------New Event---------------")
             Utils.timeLogger("EventHandler| Detected Event Interface Neighbour Change: ")
-        if (len(rows)>0):
             self.change_interface_neighbour()
-
             self.clean_all_interface_neighbour_log()
 
     def clean_interface_log(self,log_id):
