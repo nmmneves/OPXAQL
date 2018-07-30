@@ -65,4 +65,10 @@ class DBoperations:
 	
     GET_IDENTIFIER_FROM_SWITCH_BY_PHYSADDRESS = "SELECT identifier FROM switch WHERE physaddress = \'{}\'"
 	
-    GET_IDENTIFIER_FROM_NAME_AND_SWITCH = "SELECT identifier,switchidentifierfk FROM interfaces WHERE name = \'{}\'  AND  switchidentifierfk = \'{}\'"	
+    GET_IDENTIFIER_FROM_NAME_AND_SWITCH = "SELECT identifier,switchidentifierfk FROM interfaces WHERE name = \'{}\'  AND  switchidentifierfk = \'{}\'"
+
+    #Used for statistics monitor
+	
+    GET_INTERFACE_NAMES = "SELECT name FROM interfaces WHERE switchidentifierfk = \'{}\'"
+	
+    INSERT_STATISTICS = "INSERT INTO networkstatistics (hour,discontinuitytime,packetsintensecond,packetsinhundredseconds,packetsouttensecond,packetsouthundredseconds,switchidentifierfk) VALUES ({},{},{},{},{},{},\'{}\')"

@@ -9,6 +9,7 @@ from .Utils import Utils
 
 import cps_object
 import cps
+import cps_utils
 import json
 import subprocess
 
@@ -247,9 +248,71 @@ class CPSEvent:
     def log(self,data):
         Utils.cliLogger("[CPS Event] "+ data,0)
 
+# Work thread.
+class NetworkMonitor:
+
+    SLEEP_DURATION = 1
+	
+    def __init__(self, queue):
+        self.q = queue
+        self.db_operations = DBoperations()
+
+    def statistics_monitor(self):
+        self.log("Started Network Statistics Monitor...")
+        while True:
+            self.check_statistics()
+            time.sleep(self.SLEEP_DURATION)
+			
+    def check_statistics(self):
+
+        octetsout = 0;
+        octetsin = 0;
+        switchid = dh.get_switch_by_physaddres()
+		
+        queryget = self.db_operations.GET_INTERFACE_NAMES
+        names = self.db_operations.db_select_operation(queryget,switchid)
+        for name in names:
+            nameenc = ''.join(chr(i) for i in name["name"])
+            print("Name: ",nameenc)
+            data = {'if/interfaces-state/interface/name': nameenc}
+            obj = cps_object.CPSObject(qual='observed',module='dell-base-if-cmn/if/interfaces-state/interface/statistics',data=data,)
+            response = []
+            if cps.get([obj.get()], response):
+                for entry in response:
+                    octetsinbytes = entry["data"]["if/interfaces-state/interface/statistics/in-octets"]
+                    print("Test: ",octetsinbytes)
+                    resultin = 0;
+                    for b in octetsinbytes:
+                        resultin = resultin * 256 + int(b)
+                    print("Resultin: ",resultin)
+                    octetsin = octetsin + resultin
+
+                    octetsoutbytes = entry["data"]["if/interfaces-state/interface/statistics/out-octets"]
+                    print("Test: ",octetsoutbytes)
+                    resultout = 0;
+                    for b in octetsoutbytes:
+                        resultout = resultout * 256 + int(b)
+                    print("Resultout: ",resultout)
+                    octetsout = octetsout + resultout
+
+        print(octetsout)
+        print(octetsin)
+       
+        queryinsert = self.db_operations.INSERT_STATISTICS
+        queryargs = queryinsert.format(0,0,0,0,0,0,switchid)
+        operations = []
+        operations.append(queryargs)
+        self.db_operations.db_insert_operations(operations)
+
+    def log(self,data):
+        Utils.cliLogger("[Statistics Event] "+ data,0)
 
 q = Queue()
 dh = Handler()
+
+net_monitor = NetworkMonitor(q)
+thrd = Thread(target=net_monitor.statistics_monitor, args=())
+thrd.start()
 
 lldp_exctractor = LLDPEvent(q)
 thrd = Thread(target=lldp_exctractor.lldp_watch_extractor, args=())
