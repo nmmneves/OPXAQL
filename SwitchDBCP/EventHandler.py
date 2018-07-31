@@ -12,6 +12,7 @@ import cps
 import cps_utils
 import json
 import subprocess
+import bytearray_utils
 
 LLDP_TXHOLD = "3"
 LLDP_TXINTERVAL = "1"
@@ -251,7 +252,7 @@ class CPSEvent:
 # Work thread.
 class NetworkMonitor:
 
-    SLEEP_DURATION = 1
+    SLEEP_DURATION = 10
 	
     def __init__(self, queue):
         self.q = queue
@@ -267,6 +268,7 @@ class NetworkMonitor:
 
         octetsout = 0;
         octetsin = 0;
+        timestamp = 0;
         switchid = dh.get_switch_by_physaddres()
 		
         queryget = self.db_operations.GET_INTERFACE_NAMES
@@ -280,26 +282,20 @@ class NetworkMonitor:
             if cps.get([obj.get()], response):
                 for entry in response:
                     octetsinbytes = entry["data"]["if/interfaces-state/interface/statistics/in-octets"]
-                    print("Test: ",octetsinbytes)
-                    resultin = 0;
-                    for b in octetsinbytes:
-                        resultin = resultin * 256 + int(b)
-                    print("Resultin: ",resultin)
-                    octetsin = octetsin + resultin
+                    octetsin = octetsin + bytearray_utils.from_ba(octetsinbytes,"uint8_t")
 
                     octetsoutbytes = entry["data"]["if/interfaces-state/interface/statistics/out-octets"]
-                    print("Test: ",octetsoutbytes)
-                    resultout = 0;
-                    for b in octetsoutbytes:
-                        resultout = resultout * 256 + int(b)
-                    print("Resultout: ",resultout)
-                    octetsout = octetsout + resultout
-
+                    octetsout = octetsout + bytearray_utils.from_ba(octetsoutbytes,"uint8_t")
+					
+                    timestampbytes = entry["data"]["dell-base-if-cmn/if/interfaces-state/interface/statistics/time-stamp"]
+                    timestamp = bytearray_utils.from_ba(timestampbytes ,"uint8_t")
+		    
         print(octetsout)
         print(octetsin)
+        print(timestamp)
        
         queryinsert = self.db_operations.INSERT_STATISTICS
-        queryargs = queryinsert.format(0,0,0,0,0,0,switchid)
+        queryargs = queryinsert.format(timestamp,0,octetsin,octetsout,0,0,switchid)
         operations = []
         operations.append(queryargs)
         self.db_operations.db_insert_operations(operations)
