@@ -71,4 +71,8 @@ class DBoperations:
 	
     GET_INTERFACE_NAMES = "SELECT name FROM interfaces WHERE switchidentifierfk = \'{}\'"
 	
-    INSERT_STATISTICS = "INSERT INTO networkstatistics (hour,discontinuitytime,packetsintensecond,packetsinhundredseconds,packetsouttensecond,packetsouthundredseconds,switchidentifierfk) VALUES ({},{},{},{},{},{},\'{}\')"
+    GET_STATISTICS = "SELECT packetsinhundredseconds,packetsouthundredseconds FROM networkstatistics WHERE switchidentifierfk = \'{}\'"
+
+    INSERT_STATISTICS = "INSERT INTO networkstatistics (switchidentifierfk,hour,packetsintensecond,packetsinhundredseconds,packetsouttensecond,packetsouthundredseconds) VALUES (\'{}\',{},{},{},{},{})"
+
+    DELETE_STATISTICS_BY_SWITCHID = "DELETE FROM networkstatistics WHERE switchidentifierfk = \'{}\'"

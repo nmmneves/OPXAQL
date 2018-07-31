@@ -196,7 +196,7 @@ class LLDPEvent:
                         q.put((dh.add_neighbour, (if_name, remote_chassis_mac,remote_if_name), {}))
                         #self.log("Create: Interface: " + if_name + """" from: " + remote_chassis_mac +""" " with managment ip: " + mgmt_ip)
     def log(self,data):
-        Utils.cliLogger("[Neighbourhood] "+ data,0)
+        Utils.cliLogger("[Neighbourhood Event] "+ data,0)
 
 # Work thread.
 class CPSEvent:
@@ -251,9 +251,12 @@ class CPSEvent:
 
 # Work thread.
 class NetworkMonitor:
-
-    SLEEP_DURATION = 10
 	
+    secondscounter = 0
+    octetsoutx10 = 0
+    octetsinx10 = 0
+    SLEEP_DURATION = 10
+
     def __init__(self, queue):
         self.q = queue
         self.db_operations = DBoperations()
@@ -261,21 +264,22 @@ class NetworkMonitor:
     def statistics_monitor(self):
         self.log("Started Network Statistics Monitor...")
         while True:
-            self.check_statistics()
             time.sleep(self.SLEEP_DURATION)
+            self.check_statistics()
 			
     def check_statistics(self):
 
-        octetsout = 0;
-        octetsin = 0;
-        timestamp = 0;
         switchid = dh.get_switch_by_physaddres()
-		
         queryget = self.db_operations.GET_INTERFACE_NAMES
         names = self.db_operations.db_select_operation(queryget,switchid)
+		
+        octetsout = 0
+        octetsin = 0
+        timestamp = 0
+		
         for name in names:
             nameenc = ''.join(chr(i) for i in name["name"])
-            print("Name: ",nameenc)
+            #print("Name: ",nameenc)
             data = {'if/interfaces-state/interface/name': nameenc}
             obj = cps_object.CPSObject(qual='observed',module='dell-base-if-cmn/if/interfaces-state/interface/statistics',data=data,)
             response = []
@@ -290,15 +294,44 @@ class NetworkMonitor:
                     timestampbytes = entry["data"]["dell-base-if-cmn/if/interfaces-state/interface/statistics/time-stamp"]
                     timestamp = bytearray_utils.from_ba(timestampbytes ,"uint8_t")
 		    
-        print(octetsout)
-        print(octetsin)
-        print(timestamp)
-       
-        queryinsert = self.db_operations.INSERT_STATISTICS
-        queryargs = queryinsert.format(timestamp,0,octetsin,octetsout,0,0,switchid)
+        #print(octetsout)
+        #print(octetsin)
+        #print(timestamp)
+        
+		queryget = self.db_operations. GET_STATISTICS
+        results = self.db_operations.db_select_operation(queryget,switchid)
+        octetsoutquery = 0
+        octetsinquery = 0
+        if results:
+            octetsoutquery = results[0]["packetsouthundredseconds"]
+            octetsinquery = results[0]["packetsinhundredseconds"]
+		
+        querydelete = self.db_operations.DELETE_STATISTICS_BY_SWITCHID
+        queryargs1 = querydelete.format(switchid)
         operations = []
-        operations.append(queryargs)
+        operations.append(queryargs1)
         self.db_operations.db_insert_operations(operations)
+		
+        queryinsert = self.db_operations.INSERT_STATISTICS
+		
+        self.secondscounter = self.secondscounter + 1;
+        if(self.secondscounter > 10):
+            self.octetsoutx10 = self.octetsoutx10 + octetsout
+            self.octetsinx10 = self.octetsinx10 + octetsin
+            queryargs2 = queryinsert.format(switchid,timestamp,octetsin,0,octetsout,0)
+        elif(self.secondscounter == 10):
+            self.octetsoutx10 = self.octetsoutx10 + octetsout
+            self.octetsinx10 = self.octetsinx10 + octetsin
+            queryargs2 = queryinsert.format(switchid,timestamp,octetsin,self.octetsinx10,octetsout,self.octetsinx10)
+        else:
+            octetsoutx10 = ((octetsoutquery/10)*9 + octetsout)*10
+            octetsinx10 = ((octetsinquery/10)*9 + octetsin)*10
+            queryargs2 = queryinsert.format(switchid,timestamp,octetsin,octetsinx10,octetsout,octetsinx10)
+		
+        operations = []
+        operations.append(queryargs2)
+        self.db_operations.db_insert_operations(operations)
+        self.log("Updated Statistics")
 
     def log(self,data):
         Utils.cliLogger("[Statistics Event] "+ data,0)
