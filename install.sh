@@ -21,7 +21,7 @@ sudo apt-get -y update && sudo apt-get install -y screen && sudo apt-get install
 git clone https://github.com/pedromslopes/antidote.git
 cd antidote
 if [ $1 = "Switch" ]; then
- git checkout 8b9d6735810110228347053ad01fc1505fa334f4
+ git checkout 4bdbcb9a92e696b618abdd4ff036b165e6831659
 else
  git checkout 25aaa7a5c306ad5ba534c5a6281794922fe6c6a4
 fi
