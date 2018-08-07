@@ -253,8 +253,6 @@ class CPSEvent:
 class NetworkMonitor:
 	
     secondscounter = 0
-    octetsoutx10 = 0
-    octetsinx10 = 0
     SLEEP_DURATION = 10
 
     def __init__(self, queue):
@@ -262,6 +260,7 @@ class NetworkMonitor:
         self.db_operations = DBoperations()
 
     def statistics_monitor(self):
+        print("hello")
         self.log("Started Network Statistics Monitor...")
         while True:
             time.sleep(self.SLEEP_DURATION)
@@ -272,7 +271,6 @@ class NetworkMonitor:
         switchid = dh.get_switch_by_physaddres()
         queryget = self.db_operations.GET_INTERFACE_NAMES
         names = self.db_operations.db_select_operation(queryget,switchid)
-		
         octetsout = 0
         octetsin = 0
         timestamp = 0
@@ -297,37 +295,23 @@ class NetworkMonitor:
         #print(octetsout)
         #print(octetsin)
         #print(timestamp)
-        
-		queryget = self.db_operations. GET_STATISTICS
-        results = self.db_operations.db_select_operation(queryget,switchid)
+       
         octetsoutquery = 0
         octetsinquery = 0
-        if results:
+				
+        if self.secondscounter != 0:
+            queryget = self.db_operations.GET_STATISTICS
+            results = self.db_operations.db_select_operation(queryget,switchid)
             octetsoutquery = results[0]["packetsouthundredseconds"]
             octetsinquery = results[0]["packetsinhundredseconds"]
-		
-        querydelete = self.db_operations.DELETE_STATISTICS_BY_SWITCHID
-        queryargs1 = querydelete.format(switchid)
-        operations = []
-        operations.append(queryargs1)
-        self.db_operations.db_insert_operations(operations)
-		
+			
+        self.secondscounter = self.secondscounter +1;
         queryinsert = self.db_operations.INSERT_STATISTICS
 		
-        self.secondscounter = self.secondscounter + 1;
-        if(self.secondscounter > 10):
-            self.octetsoutx10 = self.octetsoutx10 + octetsout
-            self.octetsinx10 = self.octetsinx10 + octetsin
-            queryargs2 = queryinsert.format(switchid,timestamp,octetsin,0,octetsout,0)
-        elif(self.secondscounter == 10):
-            self.octetsoutx10 = self.octetsoutx10 + octetsout
-            self.octetsinx10 = self.octetsinx10 + octetsin
-            queryargs2 = queryinsert.format(switchid,timestamp,octetsin,self.octetsinx10,octetsout,self.octetsinx10)
+        if(self.secondscounter <= 10):
+            queryargs2 = queryinsert.format(switchid,timestamp,self.secondscounter,octetsin,octetsinquery + octetsin,octetsout,octetsoutquery + octetsout)
         else:
-            octetsoutx10 = ((octetsoutquery/10)*9 + octetsout)*10
-            octetsinx10 = ((octetsinquery/10)*9 + octetsin)*10
-            queryargs2 = queryinsert.format(switchid,timestamp,octetsin,octetsinx10,octetsout,octetsinx10)
-		
+            queryargs2 = queryinsert.format(switchid,timestamp,self.secondscounter,octetsin,octetsinquery,octetsout,octetsoutquery)
         operations = []
         operations.append(queryargs2)
         self.db_operations.db_insert_operations(operations)
