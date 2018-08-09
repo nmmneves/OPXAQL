@@ -66,6 +66,33 @@ class Handler:
     def convergance(self):
         self.log("Convergence request received.")
         Routing.convergance(self.db_operations)
+ 
+    def update_statistics(self):
+        queryget = self.db_operations.GET_STATISTICS
+        statistics = self.db_operations.db_select_operation(queryget,'')
+        for statistic in statistics:
+            counter = statistic["counter"]
+            if(counter > 10):
+                switchidentifierfk = ''.join(chr(i) for i in statistic["switchidentifierfk"]) 				
+                timestamp = statistic["hour"]
+                octetsoutten = statistic["packetsouttensecond"]
+                octetsinten = statistic["packetsintensecond"]
+                octetsouthundred = statistic["packetsouthundredseconds"]
+                octetsinhundred = statistic["packetsinhundredseconds"]
+				
+                octetsoutx10 = round(((octetsouthundred/10.0)*9.0 + octetsoutten)+1)
+                octetsinx10 = round(((octetsinhundred/10.0)*9.0 + octetsinten)+1)
+                operations = []
+
+                queryinsert2 = self.db_operations.UPDATE_STATISTICS_OUT
+                queryargs2 = queryinsert2.format(octetsoutx10,switchidentifierfk)
+                operations.append(queryargs2)
+				
+                queryinsert3 = self.db_operations.UPDATE_STATISTICS_IN
+                queryargs3 = queryinsert3.format(octetsinx10,switchidentifierfk)
+                operations.append(queryargs3)
+
+                self.db_operations.db_insert_operations(operations)
 
     def log(self,data):
         Utils.cliLogger("[DataHandler] "+ data,0)

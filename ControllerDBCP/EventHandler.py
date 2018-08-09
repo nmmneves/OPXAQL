@@ -10,10 +10,30 @@ import cps
 import json
 import subprocess
 
+class NetworkMonitor:
+
+    SLEEP_DURATION = 10
+
+    def __init__(self, queue):
+        self.q = queue
+        self.db_operations = DBoperations()
+
+    def log(self,data):
+        Utils.cliLogger("[Statistics Event] "+ data,0)
+
+    def statistics_monitor(self):
+        self.log("Started Network Statistics Monitor...")
+        while True:
+            self.check_statistics()
+            time.sleep(self.SLEEP_DURATION)
+			
+    def check_statistics(self):
+        q.put((dh.update_statistics, (), {}))
+
 class DBMonitor:
 
     INTERFACES_OPERATION_STATUS = "operstatus"
-    SLEEP_DURATION = 0.04
+    SLEEP_DURATION = 0.1
 
     def __init__(self, queue):
         self.q = queue
@@ -56,6 +76,7 @@ class DBMonitor:
             self.change_interface_neighbour()
             self.clean_all_interface_neighbour_log()
 
+   
     def clean_interface_log(self,log_id):
 
         operations = []
@@ -99,6 +120,10 @@ class DBMonitor:
 
 q = Queue()
 dh = Handler()
+
+net_monitor = NetworkMonitor(q)
+thrd = Thread(target=net_monitor.statistics_monitor, args=())
+thrd.start()
 
 db_monitor = DBMonitor(q)
 thrd = Thread(target=db_monitor.changes_monitor, args=())

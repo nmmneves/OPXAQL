@@ -71,3 +71,13 @@ class DBoperations:
 
     #DELETE_INTERFACE_NEIGHBOUR_LOG = """delete FROM `interface_neighbour-changes-log`"""
     DELETE_INTERFACE_NEIGHBOUR_LOG = "DELETE FROM interfaceneighbourchangeslog"
+	
+	#NEW QUERYS FOR STATISTICS
+	
+    GET_STATISTICS = "SELECT * FROM networkstatistics"
+
+    UPDATE_STATISTICS_OUT = "UPDATE networkstatistics SET packetsouthundredseconds ASSIGN {} WHERE switchidentifierfk = \'{}\'"
+
+    UPDATE_STATISTICS_IN = "UPDATE networkstatistics SET packetsinhundredseconds ASSIGN {} WHERE switchidentifierfk = \'{}\'"
+
+    DELETE_STATISTICS_BY_SWITCHID = "DELETE FROM networkstatistics WHERE switchidentifierfk = \'{}\'"
