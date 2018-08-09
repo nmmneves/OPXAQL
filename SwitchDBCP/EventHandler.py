@@ -253,6 +253,8 @@ class CPSEvent:
 class NetworkMonitor:
 	
     secondscounter = 0
+    lasttotalin = 0
+    lasttotalout = 0
     SLEEP_DURATION = 10
 
     def __init__(self, queue):
@@ -260,12 +262,11 @@ class NetworkMonitor:
         self.db_operations = DBoperations()
 
     def statistics_monitor(self):
-        print("hello")
         self.log("Started Network Statistics Monitor...")
         while True:
-            time.sleep(self.SLEEP_DURATION)
             self.check_statistics()
-			
+            time.sleep(self.SLEEP_DURATION)
+
     def check_statistics(self):
 
         switchid = dh.get_switch_by_physaddres()
@@ -277,7 +278,6 @@ class NetworkMonitor:
 		
         for name in names:
             nameenc = ''.join(chr(i) for i in name["name"])
-            #print("Name: ",nameenc)
             data = {'if/interfaces-state/interface/name': nameenc}
             obj = cps_object.CPSObject(qual='observed',module='dell-base-if-cmn/if/interfaces-state/interface/statistics',data=data,)
             response = []
@@ -291,10 +291,6 @@ class NetworkMonitor:
 					
                     timestampbytes = entry["data"]["dell-base-if-cmn/if/interfaces-state/interface/statistics/time-stamp"]
                     timestamp = bytearray_utils.from_ba(timestampbytes ,"uint8_t")
-		    
-        #print(octetsout)
-        #print(octetsin)
-        #print(timestamp)
        
         octetsoutquery = 0
         octetsinquery = 0
@@ -305,17 +301,21 @@ class NetworkMonitor:
             octetsoutquery = results[0]["packetsouthundredseconds"]
             octetsinquery = results[0]["packetsinhundredseconds"]
 			
-        self.secondscounter = self.secondscounter +1;
+        self.secondscounter = self.secondscounter + 1;
         queryinsert = self.db_operations.INSERT_STATISTICS
 		
-        if(self.secondscounter <= 10):
-            queryargs2 = queryinsert.format(switchid,timestamp,self.secondscounter,octetsin,octetsinquery + octetsin,octetsout,octetsoutquery + octetsout)
+        if(self.secondscounter <= 10): 
+            queryargs2 = queryinsert.format(switchid,timestamp,self.secondscounter,self.lasttotalin-octetsin,octetsin,self.lasttotalout-octetsout,octetsout)
         else:
-            queryargs2 = queryinsert.format(switchid,timestamp,self.secondscounter,octetsin,octetsinquery,octetsout,octetsoutquery)
+            queryargs2 = queryinsert.format(switchid,timestamp,self.secondscounter,self.lasttotalin-octetsin,octetsinquery,self.lasttotalout-octetsout,octetsoutquery)
+			
+        self.lasttotalin = octetsin
+        self.lasttotalout = octetsout
+
         operations = []
         operations.append(queryargs2)
         self.db_operations.db_insert_operations(operations)
-        self.log("Updated Statistics")
+        self.log("Updated Statistics " + str(self.secondscounter) + " times.")
 
     def log(self,data):
         Utils.cliLogger("[Statistics Event] "+ data,0)
