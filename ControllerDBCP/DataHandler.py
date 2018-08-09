@@ -80,8 +80,8 @@ class Handler:
                 octetsouthundred = statistic["packetsouthundredseconds"]
                 octetsinhundred = statistic["packetsinhundredseconds"]
 				
-                octetsoutx10 = round(((octetsouthundred/10.0)*9.0 + octetsoutten)+1)
-                octetsinx10 = round(((octetsinhundred/10.0)*9.0 + octetsinten)+1)
+                octetsoutx10 = int(round(octetsouthundred*0.9 + octetsoutten))
+                octetsinx10 = int(round(octetsinhundred*0.9 + octetsinten))
                 operations = []
 
                 queryinsert2 = self.db_operations.UPDATE_STATISTICS_OUT
