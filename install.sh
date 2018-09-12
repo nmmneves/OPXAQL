@@ -70,6 +70,7 @@ else
 fi
 chmod +x start.sh
 chmod +x stop.sh
+sudo apt-get install ntp -y
 rm install.sh
 
 
