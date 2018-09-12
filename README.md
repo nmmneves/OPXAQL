@@ -14,10 +14,12 @@ and also go to "Use Developer Features" e select Developer Mode.*
 3- Create a "Vagrantfile", preferably in the Desktop directory, with this:
 
 Vagrant.configure("2") do |config|
-  config.vm.box = "opx/2.2.0"
-  config.vm.box_version = "2.2.0"
-end
 
+  config.vm.box = "opx/2.1.0"
+  
+  config.vm.box_version = "2.1.0"
+  
+end
 4- In the same directory do "vagrant up". It should download a VMI with OPX Version 2.2 pre-installed.
 
 5- Now in Virtual Box, the VM you just downloaded should be running.
